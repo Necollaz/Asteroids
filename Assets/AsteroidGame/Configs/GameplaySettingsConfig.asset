@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99b7f00d6afe424c8b79eafd9750a6ba, type: 3}
+  m_Name: GameplaySettingsConfig
+  m_EditorClassIdentifier: 
+  _turnLeftKey: 97
+  _turnRightKey: 100
+  _thrustKey: 119
+  _alternativeTurnLeftKey: 276
+  _alternativeTurnRightKey: 275
+  _alternativeThrustKey: 273
+  _worldWidth: 40
+  _worldHeight: 22.5
+  _playerSpawnPosition: {x: 0, y: 0}
+  _playerAcceleration: 18
+  _playerTurnSpeed: 180
+  _playerMaxSpeed: 12
+  _playerLinearDamping: 0.15
+  _playerSpawnRotationDegrees: 0
