@@ -12,7 +12,11 @@ namespace AsteroidGame.Scripts.Presentation.Camera
         public float WorldWidth => GetWorldWidth();
         public float WorldHeight => GetWorldHeight();
 
-        private void OnValidate() => _camera ??= GetComponent<UnityEngine.Camera>();
+        private void OnValidate()
+        {
+            if (_camera == null)
+                _camera = GetComponent<UnityEngine.Camera>();
+        }
 
         private float GetWorldWidth()
         {

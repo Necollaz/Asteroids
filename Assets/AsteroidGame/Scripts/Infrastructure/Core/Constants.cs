@@ -1,7 +1,7 @@
 namespace AsteroidGame.Scripts.Infrastructure.Core
 {
-    public class Constants
+    public static class Constants
     {
-        public const string EditorCongigsPath = "Confings/";
+        public const string EditorConfigsPath = "Confings/";
     }
 }

@@ -3,7 +3,7 @@ using AsteroidGame.Scripts.Gameplay.Player;
 
 namespace AsteroidGame.Scripts.Presentation.Player
 {
-    public class PlayerViewPresenter: ILateTickable
+    public sealed class PlayerViewPresenter: ILateTickable
     {
         private readonly IPlayerStateProvider _playerStateProvider;
         private readonly PlayerView _playerView;
@@ -14,6 +14,6 @@ namespace AsteroidGame.Scripts.Presentation.Player
             _playerView = playerView;
         }
 
-        public void LateTick() => _playerView.ApplySnapshot(_playerStateProvider.Snapshot);
+        void ILateTickable.LateTick() => _playerView.ApplySnapshot(_playerStateProvider.Snapshot);
     }
 }

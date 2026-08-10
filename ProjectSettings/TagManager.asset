@@ -26,17 +26,17 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - DespawningField
+  - ParticleDestroyer
+  - FX
+  - Backgrounds
+  - Player
+  - PlayerMunition
+  - Enemies
+  - EnemyPlaceholders
+  - EnemyMunition
+  - Pickups
+  - BackgroundObjects
   m_SortingLayers:
   - name: Default
     uniqueID: 0

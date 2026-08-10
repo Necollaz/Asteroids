@@ -18,11 +18,13 @@ MonoBehaviour:
   _alternativeTurnLeftKey: 276
   _alternativeTurnRightKey: 275
   _alternativeThrustKey: 273
-  _worldWidth: 40
-  _worldHeight: 22.5
   _playerSpawnPosition: {x: 0, y: 0}
   _playerAcceleration: 18
   _playerTurnSpeed: 180
-  _playerMaxSpeed: 12
+  _playerMaxSpeed: 3
   _playerLinearDamping: 0.15
   _playerSpawnRotationDegrees: 0
+  _playerMaxHealth: 3
+  _playerCollisionRadius: 0.45
+  _playerCollisionBounceSpeed: 8
+  _playerInvulnerabilitySeconds: 3

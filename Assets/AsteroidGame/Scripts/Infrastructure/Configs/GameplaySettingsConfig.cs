@@ -7,10 +7,11 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
 {
     [CreateAssetMenu(
         fileName = nameof(GameplaySettingsConfig),
-        menuName = Constants.EditorCongigsPath + nameof(GameplaySettingsConfig))]
+        menuName = Constants.EditorConfigsPath + nameof(GameplaySettingsConfig))]
     public sealed class GameplaySettingsConfig : 
         ScriptableObject,
         IPlayerMovementSettingsData,
+        IPlayerCollisionSettingsData,
         IKeyboardInputSettingsData
     {
         [Header("Keyboard Input")]
@@ -29,6 +30,12 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         [SerializeField] private float _playerLinearDamping = 0.15f;
         [SerializeField] private float _playerSpawnRotationDegrees;
         
+        [Header("Player Collision")]
+        [SerializeField] private int _playerMaxHealth = 3;
+        [SerializeField] private float _playerCollisionRadius = 0.45f;
+        [SerializeField] private float _playerCollisionBounceSpeed = 8f;
+        [SerializeField] private float _playerInvulnerabilitySeconds = 3f;
+        
         public KeyCode TurnLeftKey => _turnLeftKey;
         public KeyCode TurnRightKey => _turnRightKey;
         public KeyCode ThrustKey => _thrustKey;
@@ -42,6 +49,9 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         public float PlayerMaxSpeed => _playerMaxSpeed;
         public float PlayerLinearDamping => _playerLinearDamping;
         public float PlayerSpawnRotationDegrees => _playerSpawnRotationDegrees;
-
+        public int PlayerMaxHealth => _playerMaxHealth;
+        public float PlayerCollisionRadius => _playerCollisionRadius;
+        public float PlayerCollisionBounceSpeed => _playerCollisionBounceSpeed;
+        public float PlayerInvulnerabilitySeconds => _playerInvulnerabilitySeconds;
     }
 }

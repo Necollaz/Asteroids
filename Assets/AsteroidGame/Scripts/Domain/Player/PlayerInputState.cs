@@ -15,6 +15,6 @@ namespace AsteroidGame.Scripts.Domain.Player
         }
         
         public float TurnDirection { get; }
-        public bool IsThrustPressed  { get; }
+        public bool IsThrustPressed { get; }
     }
 }

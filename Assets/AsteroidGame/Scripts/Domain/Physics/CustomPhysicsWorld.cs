@@ -32,6 +32,17 @@ namespace AsteroidGame.Scripts.Domain.Physics
             body.SetVelocity(_physicsValueFactory.CreateVelocity(velocity));
             body.SetPosition(nextPosition);
         }
+        
+        public void ApplyBounce(Body2D first, Body2D second, float bounceSpeed)
+        {
+            Vector2D difference = first.Position.Subtract(second.Position);
+            Vector2D normal = difference.SqrMagnitude <= float.Epsilon
+                ? _physicsValueFactory.CreateVector(0f, 1f)
+                : difference.Normalized;
+
+            first.SetVelocity(_physicsValueFactory.CreateVelocity(normal.Multiply(bounceSpeed)));
+            second.SetVelocity(_physicsValueFactory.CreateVelocity(normal.Multiply(-bounceSpeed)));
+        }
 
         private Vector2D ApplyDamping(Vector2D velocity, float linearDamping, float deltaTime)
         {
