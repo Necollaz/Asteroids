@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using Zenject;
-using AsteroidGame.Scripts.Domain.Player;
+using AsteroidGame.Scripts.Domain.Player.Models;
 
 namespace AsteroidGame.Scripts.Input
 {
@@ -32,7 +32,11 @@ namespace AsteroidGame.Scripts.Input
                 UnityEngine.Input.GetKey(_settingsData.ThrustKey) ||
                 UnityEngine.Input.GetKey(_settingsData.AlternativeThrustKey);
 
-            return new PlayerInputState(turnDirection, isThrustPressed);
+            bool isBulletFirePressed =
+                UnityEngine.Input.GetKey(_settingsData.FireBulletKey) ||
+                UnityEngine.Input.GetKey(_settingsData.AlternativeFireBulletKey);
+
+            return new PlayerInputState(turnDirection, isThrustPressed, isBulletFirePressed);
         }
     }
 }

@@ -1,6 +1,7 @@
 using Zenject;
-using AsteroidGame.Scripts.Domain.Collision;
-using AsteroidGame.Scripts.Domain.Physics;
+using AsteroidGame.Scripts.Domain.Collision.Bodies;
+using AsteroidGame.Scripts.Domain.Collision.Types;
+using AsteroidGame.Scripts.Domain.Physics.Models;
 
 namespace AsteroidGame.Scripts.Gameplay.Factories
 {

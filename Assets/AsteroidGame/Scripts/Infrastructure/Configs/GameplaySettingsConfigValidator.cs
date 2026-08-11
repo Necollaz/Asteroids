@@ -7,14 +7,16 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
     public sealed class GameplaySettingsConfigValidator : IInitializable
     {
         private readonly GameplaySettingsConfig _config;
-        
+
         public GameplaySettingsConfigValidator(GameplaySettingsConfig config) => _config = config;
 
         void IInitializable.Initialize()
         {
             ValidatePlayerMovement();
             ValidatePlayerCollision();
+            ValidatePlayerLaser();
             ValidateKeyboardInput();
+            ValidateBullets();
         }
 
         private void ValidatePlayerMovement()
@@ -47,6 +49,45 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
                 throw new InvalidOperationException("Player invulnerability seconds must be greater than zero.");
         }
 
+        private void ValidatePlayerLaser()
+        {
+            if (_config.PlayerMaxLaserCharges <= 0)
+                throw new InvalidOperationException("Player max laser charges must be greater than zero.");
+
+            if (_config.PlayerInitialLaserCharges < 0)
+                throw new InvalidOperationException("Player initial laser charges cannot be negative.");
+
+            if (_config.PlayerInitialLaserCharges > _config.PlayerMaxLaserCharges)
+            {
+                throw new InvalidOperationException(
+                    "Player initial laser charges cannot be greater than max laser charges.");
+            }
+        }
+        
+        private void ValidateBullets()
+        {
+            if (_config.BulletSpeed <= 0f)
+                throw new InvalidOperationException("Bullet speed must be greater than zero.");
+
+            if (_config.BulletLifetimeSeconds <= 0f)
+                throw new InvalidOperationException("Bullet lifetime seconds must be greater than zero.");
+
+            if (_config.BulletRadius <= 0f)
+                throw new InvalidOperationException("Bullet radius must be greater than zero.");
+
+            if (_config.BulletShotsPerSecond <= 0f)
+                throw new InvalidOperationException("Bullet shots per second must be greater than zero.");
+
+            if (_config.PoolSize <= 0)
+                throw new InvalidOperationException("Bullet pool size must be greater than zero.");
+
+            if (_config.BulletSpawnOffset < 0f)
+                throw new InvalidOperationException("Bullet spawn offset cannot be negative.");
+
+            if (_config.BulletVisibilityMargin < 0f)
+                throw new InvalidOperationException("Bullet visibility margin cannot be negative.");
+        }
+
         private void ValidateKeyboardInput()
         {
             ValidateKey(_config.TurnLeftKey, nameof(_config.TurnLeftKey));
@@ -55,6 +96,8 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
             ValidateKey(_config.AlternativeTurnLeftKey, nameof(_config.AlternativeTurnLeftKey));
             ValidateKey(_config.AlternativeTurnRightKey, nameof(_config.AlternativeTurnRightKey));
             ValidateKey(_config.AlternativeThrustKey, nameof(_config.AlternativeThrustKey));
+            ValidateKey(_config.FireBulletKey, nameof(_config.FireBulletKey));
+            ValidateKey(_config.AlternativeFireBulletKey, nameof(_config.AlternativeFireBulletKey));
         }
 
         private void ValidateKey(KeyCode keyCode, string propertyName)

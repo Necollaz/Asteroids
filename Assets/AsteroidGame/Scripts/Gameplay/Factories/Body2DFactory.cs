@@ -1,5 +1,5 @@
 using Zenject;
-using AsteroidGame.Scripts.Domain.Physics;
+using AsteroidGame.Scripts.Domain.Physics.Models;
 
 namespace AsteroidGame.Scripts.Gameplay.Factories
 {

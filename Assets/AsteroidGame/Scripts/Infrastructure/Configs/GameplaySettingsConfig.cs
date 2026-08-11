@@ -1,5 +1,6 @@
 using UnityEngine;
-using AsteroidGame.Scripts.Domain.Player;
+using AsteroidGame.Scripts.Domain.Bullets.Contracts;
+using AsteroidGame.Scripts.Domain.Player.Contracts;
 using AsteroidGame.Scripts.Infrastructure.Core;
 using AsteroidGame.Scripts.Input;
 
@@ -12,7 +13,9 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         ScriptableObject,
         IPlayerMovementSettingsData,
         IPlayerCollisionSettingsData,
-        IKeyboardInputSettingsData
+        IPlayerLaserSettingsData,
+        IKeyboardInputSettingsData,
+        IBulletSettingsData
     {
         [Header("Keyboard Input")]
         [SerializeField] private KeyCode _turnLeftKey = KeyCode.A;
@@ -21,6 +24,8 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         [SerializeField] private KeyCode _alternativeTurnLeftKey = KeyCode.LeftArrow;
         [SerializeField] private KeyCode _alternativeTurnRightKey = KeyCode.RightArrow;
         [SerializeField] private KeyCode _alternativeThrustKey = KeyCode.UpArrow;
+        [SerializeField] private KeyCode _fireBulletKey = KeyCode.Space;
+        [SerializeField] private KeyCode _alternativeFireBulletKey = KeyCode.Mouse0;
 
         [Header("Player Movement")]
         [SerializeField] private Vector2 _playerSpawnPosition;
@@ -36,12 +41,28 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         [SerializeField] private float _playerCollisionBounceSpeed = 8f;
         [SerializeField] private float _playerInvulnerabilitySeconds = 3f;
         
+        [Header("Bullets")]
+        [SerializeField] private float _bulletSpeed = 24f;
+        [SerializeField] private float _bulletLifetimeSeconds = 1.2f;
+        [SerializeField] private float _bulletRadius = 0.2f;
+        [SerializeField] private float _bulletShotsPerSecond = 5f;
+        [SerializeField] private int _bulletPoolSize = 24;
+        [SerializeField] private float _bulletSpawnOffset = 0.7f;
+        [SerializeField] private float _bulletVisibilityMargin = 0.25f;
+        
+        [Header("Player Laser")]
+        [SerializeField] private int _playerMaxLaserCharges = 3;
+        [SerializeField] private int _playerInitialLaserCharges = 3;
+        
         public KeyCode TurnLeftKey => _turnLeftKey;
         public KeyCode TurnRightKey => _turnRightKey;
         public KeyCode ThrustKey => _thrustKey;
         public KeyCode AlternativeTurnLeftKey => _alternativeTurnLeftKey;
         public KeyCode AlternativeTurnRightKey => _alternativeTurnRightKey;
         public KeyCode AlternativeThrustKey => _alternativeThrustKey;
+        public KeyCode FireBulletKey => _fireBulletKey;
+        public KeyCode AlternativeFireBulletKey => _alternativeFireBulletKey;
+        
         public float PlayerSpawnPositionX => _playerSpawnPosition.x;
         public float PlayerSpawnPositionY => _playerSpawnPosition.y;
         public float PlayerAcceleration => _playerAcceleration;
@@ -49,9 +70,20 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         public float PlayerMaxSpeed => _playerMaxSpeed;
         public float PlayerLinearDamping => _playerLinearDamping;
         public float PlayerSpawnRotationDegrees => _playerSpawnRotationDegrees;
-        public int PlayerMaxHealth => _playerMaxHealth;
         public float PlayerCollisionRadius => _playerCollisionRadius;
         public float PlayerCollisionBounceSpeed => _playerCollisionBounceSpeed;
         public float PlayerInvulnerabilitySeconds => _playerInvulnerabilitySeconds;
+
+        public float BulletSpeed => _bulletSpeed;
+        public float BulletLifetimeSeconds => _bulletLifetimeSeconds;
+        public float BulletRadius => _bulletRadius;
+        public float BulletShotsPerSecond => _bulletShotsPerSecond;
+        public float BulletSpawnOffset => _bulletSpawnOffset;
+        public float BulletVisibilityMargin => _bulletVisibilityMargin;
+
+        public int PoolSize => _bulletPoolSize;
+        public int PlayerMaxHealth => _playerMaxHealth;
+        public int PlayerMaxLaserCharges => _playerMaxLaserCharges;
+        public int PlayerInitialLaserCharges => _playerInitialLaserCharges;
     }
 }

@@ -1,4 +1,4 @@
-using AsteroidGame.Scripts.Domain.Player;
+using AsteroidGame.Scripts.Domain.Player.Models;
 
 namespace AsteroidGame.Scripts.Input
 {
