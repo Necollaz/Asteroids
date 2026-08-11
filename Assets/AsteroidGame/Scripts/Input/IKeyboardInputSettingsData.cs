@@ -8,9 +8,11 @@ namespace AsteroidGame.Scripts.Input
         KeyCode TurnRightKey { get; }
         KeyCode ThrustKey { get; }
         KeyCode FireBulletKey { get; }
+        KeyCode FireLaserKey { get; }
         KeyCode AlternativeTurnLeftKey { get; }
         KeyCode AlternativeTurnRightKey { get; }
         KeyCode AlternativeThrustKey { get; }
         KeyCode AlternativeFireBulletKey { get; }
+        KeyCode AlternativeFireLaserKey { get; }
     }
 }

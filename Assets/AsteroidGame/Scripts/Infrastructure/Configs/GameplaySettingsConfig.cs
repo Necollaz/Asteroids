@@ -26,7 +26,9 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         [SerializeField] private KeyCode _alternativeThrustKey = KeyCode.UpArrow;
         [SerializeField] private KeyCode _fireBulletKey = KeyCode.Space;
         [SerializeField] private KeyCode _alternativeFireBulletKey = KeyCode.Mouse0;
-
+        [SerializeField] private KeyCode _fireLaserKey = KeyCode.E;
+        [SerializeField] private KeyCode _alternativeFireLaserKey = KeyCode.Mouse1;
+        
         [Header("Player Movement")]
         [SerializeField] private Vector2 _playerSpawnPosition;
         [SerializeField] private float _playerAcceleration = 18f;
@@ -42,17 +44,22 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         [SerializeField] private float _playerInvulnerabilitySeconds = 3f;
         
         [Header("Bullets")]
+        [SerializeField] private int _bulletPoolSize = 24;
         [SerializeField] private float _bulletSpeed = 24f;
         [SerializeField] private float _bulletLifetimeSeconds = 1.2f;
         [SerializeField] private float _bulletRadius = 0.2f;
         [SerializeField] private float _bulletShotsPerSecond = 5f;
-        [SerializeField] private int _bulletPoolSize = 24;
         [SerializeField] private float _bulletSpawnOffset = 0.7f;
         [SerializeField] private float _bulletVisibilityMargin = 0.25f;
         
         [Header("Player Laser")]
         [SerializeField] private int _playerMaxLaserCharges = 3;
         [SerializeField] private int _playerInitialLaserCharges = 3;
+        [SerializeField] private float _playerLaserRechargeSeconds = 4f;
+        [SerializeField] private float _playerLaserVisibleSeconds = 1f;
+        [SerializeField] private float _playerLaserLength = 2.5f;
+        [SerializeField] private float _playerLaserHitHalfWidth = 0.15f;
+        [SerializeField] private float _playerLaserVisualWidth = 0.25f;
         
         public KeyCode TurnLeftKey => _turnLeftKey;
         public KeyCode TurnRightKey => _turnRightKey;
@@ -62,6 +69,8 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         public KeyCode AlternativeThrustKey => _alternativeThrustKey;
         public KeyCode FireBulletKey => _fireBulletKey;
         public KeyCode AlternativeFireBulletKey => _alternativeFireBulletKey;
+        public KeyCode FireLaserKey => _fireLaserKey;
+        public KeyCode AlternativeFireLaserKey => _alternativeFireLaserKey;
         
         public float PlayerSpawnPositionX => _playerSpawnPosition.x;
         public float PlayerSpawnPositionY => _playerSpawnPosition.y;
@@ -80,6 +89,12 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         public float BulletShotsPerSecond => _bulletShotsPerSecond;
         public float BulletSpawnOffset => _bulletSpawnOffset;
         public float BulletVisibilityMargin => _bulletVisibilityMargin;
+        
+        public float PlayerLaserRechargeSeconds => _playerLaserRechargeSeconds;
+        public float PlayerLaserVisibleSeconds => _playerLaserVisibleSeconds;
+        public float PlayerLaserLength => _playerLaserLength;
+        public float PlayerLaserHitHalfWidth => _playerLaserHitHalfWidth;
+        public float PlayerLaserVisualWidth => _playerLaserVisualWidth;
 
         public int PoolSize => _bulletPoolSize;
         public int PlayerMaxHealth => _playerMaxHealth;

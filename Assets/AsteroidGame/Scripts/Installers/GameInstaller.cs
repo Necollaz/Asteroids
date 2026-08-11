@@ -28,6 +28,8 @@ using AsteroidGame.Scripts.Gameplay.Bullets.Timers;
 using AsteroidGame.Scripts.Gameplay.Collision;
 using AsteroidGame.Scripts.Gameplay.Factories;
 using AsteroidGame.Scripts.Gameplay.Game;
+using AsteroidGame.Scripts.Gameplay.Laser.Contracts;
+using AsteroidGame.Scripts.Gameplay.Laser.Services;
 using AsteroidGame.Scripts.Gameplay.Player.Calculations;
 using AsteroidGame.Scripts.Gameplay.Player.Contracts;
 using AsteroidGame.Scripts.Gameplay.Player.Services;
@@ -37,6 +39,7 @@ using AsteroidGame.Scripts.Infrastructure.Scenes;
 using AsteroidGame.Scripts.Input;
 using AsteroidGame.Scripts.Presentation.Bullets;
 using AsteroidGame.Scripts.Presentation.Camera;
+using AsteroidGame.Scripts.Presentation.Laser;
 using AsteroidGame.Scripts.Presentation.Player.Presenters;
 using AsteroidGame.Scripts.Presentation.Player.Views;
 using AsteroidGame.Scripts.Signals.Bullets;
@@ -65,6 +68,7 @@ namespace AsteroidGame.Scripts.Installers
             InstallCollision();
             InstallPlayer();
             InstallBullets();
+            InstallLaser();
             InstallPresentation();
             InstallUi();
             InstallInfrastructure();
@@ -83,6 +87,9 @@ namespace AsteroidGame.Scripts.Installers
             Container.DeclareSignal<GameRestartRequestedSignal>();
             Container.DeclareSignal<PlayerBulletFiredSignal>().OptionalSubscriber();
             Container.DeclareSignal<EnemyHitByBulletSignal>().OptionalSubscriber();
+            Container.DeclareSignal<PlayerLaserFiredSignal>();
+            Container.DeclareSignal<PlayerLaserChargesChangedSignal>();
+            Container.DeclareSignal<EnemyHitByLaserSignal>().OptionalSubscriber();
 
             Container.Bind<PlayerBulletFiredSignal>().AsSingle();
         }
@@ -134,6 +141,7 @@ namespace AsteroidGame.Scripts.Installers
             Container.Bind<CollisionContactRouter>().AsSingle();
             Container.Bind<BulletEnemyCollisionContactResolver>().AsSingle();
             Container.Bind<BulletEnemyCollisionHandler>().AsSingle();
+            Container.Bind<LineCircleIntersectionDetector>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<CollisionSimulationService>().AsSingle();
 
@@ -149,6 +157,7 @@ namespace AsteroidGame.Scripts.Installers
             Container.Bind<PlayerHealthState>().AsSingle();
             Container.Bind<PlayerInvulnerabilityState>().AsSingle();
             Container.Bind<PlayerLaserMagazine>().AsSingle();
+            Container.Bind<PlayerLaserRechargeState>().AsSingle();
             Container.Bind<PlayerSnapshotFactory>().AsSingle();
 
             Container.Bind<ITimeProvider>().To<UnityTimeProvider>().AsSingle();
@@ -187,14 +196,28 @@ namespace AsteroidGame.Scripts.Installers
                 .FromComponentInNewPrefab(_bulletPrefab)
                 .UnderTransform(_bulletRoot);
         }
+        
+        private void InstallLaser()
+        {
+            Container
+                .Bind<ILaserSpawnPointProvider>()
+                .To<PlayerLaserSpawnPointView>()
+                .FromComponentInHierarchy()
+                .AsSingle();
+            Container.BindInterfacesAndSelfTo<PlayerLaserShootingService>().AsSingle();
+            Container.BindInterfacesAndSelfTo<PlayerLaserRechargeService>().AsSingle();
+        }
 
         private void InstallPresentation()
         {
-            Container.BindInterfacesAndSelfTo<PlayerViewPresenter>().AsSingle();
-            Container.BindInterfacesAndSelfTo<PlayerInvulnerabilityPresenter>().AsSingle();
-
             Container.Bind<PlayerView>().FromComponentInHierarchy().AsSingle();
+            Container.BindInterfacesAndSelfTo<PlayerViewPresenter>().AsSingle();
+            
             Container.Bind<PlayerInvulnerabilityEffectView>().FromComponentInHierarchy().AsSingle();
+            Container.BindInterfacesAndSelfTo<PlayerInvulnerabilityPresenter>().AsSingle();
+            
+            Container.Bind<PlayerLaserView>().FromComponentInHierarchy().AsSingle();
+            Container.BindInterfacesAndSelfTo<PlayerLaserVisualPresenter>().AsSingle();
         }
 
         private void InstallUi()
@@ -207,6 +230,9 @@ namespace AsteroidGame.Scripts.Installers
             
             Container.Bind<DefeatGameView>().FromComponentInHierarchy().AsSingle();
             Container.BindInterfacesAndSelfTo<DefeatGamePresenter>().AsSingle();
+            
+            Container.Bind<PlayerLaserHudView>().FromComponentInHierarchy().AsSingle();
+            Container.BindInterfacesAndSelfTo<PlayerLaserHudPresenter>().AsSingle();
         }
 
         private void InstallInfrastructure() => Container.BindInterfacesAndSelfTo<SceneRestartService>().AsSingle();

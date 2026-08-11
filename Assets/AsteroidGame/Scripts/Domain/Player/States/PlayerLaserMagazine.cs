@@ -17,6 +17,7 @@ namespace AsteroidGame.Scripts.Domain.Player.States
         public int Charges { get; private set; }
         public int MaxCharges { get; }
         public bool HasCharges => Charges > 0;
+        public bool IsFull => Charges >= MaxCharges;
 
         public bool ConsumeCharge()
         {
@@ -28,12 +29,14 @@ namespace AsteroidGame.Scripts.Domain.Player.States
             return true;
         }
 
-        public void AddCharge()
+        public bool TryAddCharge()
         {
-            if (Charges >= MaxCharges)
-                return;
+            if (IsFull)
+                return false;
 
             Charges++;
+
+            return true;
         }
 
         public void Refill() => Charges = MaxCharges;

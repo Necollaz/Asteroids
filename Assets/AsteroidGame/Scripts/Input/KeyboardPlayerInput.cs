@@ -36,7 +36,15 @@ namespace AsteroidGame.Scripts.Input
                 UnityEngine.Input.GetKey(_settingsData.FireBulletKey) ||
                 UnityEngine.Input.GetKey(_settingsData.AlternativeFireBulletKey);
 
-            return new PlayerInputState(turnDirection, isThrustPressed, isBulletFirePressed);
+            bool isLaserFirePressed =
+                UnityEngine.Input.GetKeyDown(_settingsData.FireLaserKey) ||
+                UnityEngine.Input.GetKeyDown(_settingsData.AlternativeFireLaserKey);
+
+            return new PlayerInputState(
+                turnDirection,
+                isThrustPressed,
+                isBulletFirePressed,
+                isLaserFirePressed);
         }
     }
 }

@@ -18,6 +18,10 @@ MonoBehaviour:
   _alternativeTurnLeftKey: 276
   _alternativeTurnRightKey: 275
   _alternativeThrustKey: 273
+  _fireBulletKey: 32
+  _alternativeFireBulletKey: 323
+  _fireLaserKey: 101
+  _alternativeFireLaserKey: 324
   _playerSpawnPosition: {x: 0, y: 0}
   _playerAcceleration: 18
   _playerTurnSpeed: 180
@@ -28,3 +32,17 @@ MonoBehaviour:
   _playerCollisionRadius: 0.45
   _playerCollisionBounceSpeed: 8
   _playerInvulnerabilitySeconds: 3
+  _bulletPoolSize: 24
+  _bulletSpeed: 24
+  _bulletLifetimeSeconds: 1.2
+  _bulletRadius: 0.2
+  _bulletShotsPerSecond: 5
+  _bulletSpawnOffset: 0.7
+  _bulletVisibilityMargin: 0.25
+  _playerMaxLaserCharges: 3
+  _playerInitialLaserCharges: 3
+  _playerLaserRechargeSeconds: 4
+  _playerLaserVisibleSeconds: 1
+  _playerLaserLength: 3
+  _playerLaserHitHalfWidth: 0.15
+  _playerLaserVisualWidth: 0.25
