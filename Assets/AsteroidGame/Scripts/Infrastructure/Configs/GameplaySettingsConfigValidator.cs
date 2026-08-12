@@ -17,6 +17,7 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
             ValidatePlayerLaser();
             ValidateKeyboardInput();
             ValidateBullets();
+            ValidateAsteroids();
         }
 
         private void ValidatePlayerMovement()
@@ -86,6 +87,46 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
 
             if (_config.BulletVisibilityMargin < 0f)
                 throw new InvalidOperationException("Bullet visibility margin cannot be negative.");
+        }
+        
+        private void ValidateAsteroids()
+        {
+            if (_config.AsteroidPoolSize <= 0)
+                throw new InvalidOperationException("Asteroid pool size must be greater than zero.");
+
+            if (_config.MaxActiveAsteroids <= 0)
+                throw new InvalidOperationException("Max active asteroids must be greater than zero.");
+
+            if (_config.AsteroidSpawnIntervalSeconds <= 0f)
+                throw new InvalidOperationException("Asteroid spawn interval seconds must be greater than zero.");
+
+            if (_config.AsteroidSpawnMargin < 0f)
+                throw new InvalidOperationException("Asteroid spawn margin cannot be negative.");
+
+            if (_config.LargeAsteroidSpeed <= 0f)
+                throw new InvalidOperationException("Large asteroid speed must be greater than zero.");
+
+            if (_config.MediumAsteroidSpeed <= _config.LargeAsteroidSpeed)
+                throw new InvalidOperationException("Medium asteroid speed must be greater than large asteroid speed.");
+
+            if (_config.SmallAsteroidSpeed <= _config.MediumAsteroidSpeed)
+                throw new InvalidOperationException("Small asteroid speed must be greater than medium asteroid speed.");
+
+            if (_config.LargeAsteroidRadius <= 0f ||
+                _config.MediumAsteroidRadius <= 0f || 
+                _config.SmallAsteroidRadius <= 0f)
+            {
+                throw new InvalidOperationException("Asteroid radii must be greater than zero.");
+            }
+
+            if (_config.MediumFragmentsPerLarge <= 0)
+                throw new InvalidOperationException("Medium fragments per large must be greater than zero.");
+
+            if (_config.SmallFragmentsPerMedium <= 0)
+                throw new InvalidOperationException("Small fragments per medium must be greater than zero.");
+            
+            if (_config.AsteroidSpeedReturnRate <= 0f)
+                throw new InvalidOperationException("Asteroid speed return rate must be greater than zero.");
         }
 
         private void ValidateKeyboardInput()

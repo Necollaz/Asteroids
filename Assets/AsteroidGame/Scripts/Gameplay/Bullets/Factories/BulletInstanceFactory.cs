@@ -14,17 +14,20 @@ namespace AsteroidGame.Scripts.Gameplay.Bullets.Factories
     public sealed class BulletInstanceFactory
     {
         private readonly BulletModelFactory _bulletModelFactory;
+        private readonly BulletInstanceZenjectFactory _bulletInstanceFactory;
         private readonly Body2DFactory _bodyFactory;
         private readonly CollisionBodyFactory _collisionBodyFactory;
         private readonly PhysicsValueFactory _physicsValueFactory;
 
         public BulletInstanceFactory(
             BulletModelFactory bulletModelFactory,
+            BulletInstanceZenjectFactory bulletInstanceFactory,
             Body2DFactory bodyFactory,
             CollisionBodyFactory collisionBodyFactory,
             PhysicsValueFactory physicsValueFactory)
         {
             _bulletModelFactory = bulletModelFactory;
+            _bulletInstanceFactory = bulletInstanceFactory;
             _bodyFactory = bodyFactory;
             _collisionBodyFactory = collisionBodyFactory;
             _physicsValueFactory = physicsValueFactory;
@@ -44,7 +47,7 @@ namespace AsteroidGame.Scripts.Gameplay.Bullets.Factories
             CollisionBody collisionBody = _collisionBodyFactory.Create(CollisionCategory.Bullet, body, settings.Radius);
             BulletModel model = _bulletModelFactory.Create(body);
 
-            return new BulletInstance(model, collisionBody, view);
+            return _bulletInstanceFactory.Create(model, collisionBody, view);
         }
     }
 }

@@ -1,4 +1,7 @@
 using System;
+using AsteroidGame.Scripts.Domain.Asteroids.Contracts;
+using AsteroidGame.Scripts.Domain.Asteroids.Models;
+using AsteroidGame.Scripts.Domain.Asteroids.Settings;
 using UnityEngine;
 using Zenject;
 using AsteroidGame.Scripts.Domain.Bullets.Contracts;
@@ -8,6 +11,11 @@ using AsteroidGame.Scripts.Domain.Collision.Bodies;
 using AsteroidGame.Scripts.Domain.Collision.Detection;
 using AsteroidGame.Scripts.Domain.Collision.Rules;
 using AsteroidGame.Scripts.Domain.Collision.Types;
+using AsteroidGame.Scripts.Domain.Enemies.Contracts;
+using AsteroidGame.Scripts.Domain.Enemies.Mapping;
+using AsteroidGame.Scripts.Domain.Enemies.Models;
+using AsteroidGame.Scripts.Domain.Enemies.Rewards;
+using AsteroidGame.Scripts.Domain.Enemies.Types;
 using AsteroidGame.Scripts.Domain.Physics.Calculations;
 using AsteroidGame.Scripts.Domain.Physics.Factories;
 using AsteroidGame.Scripts.Domain.Physics.Models;
@@ -17,15 +25,25 @@ using AsteroidGame.Scripts.Domain.Player.Factories;
 using AsteroidGame.Scripts.Domain.Player.Models;
 using AsteroidGame.Scripts.Domain.Player.Settings;
 using AsteroidGame.Scripts.Domain.Player.States;
+using AsteroidGame.Scripts.Domain.Score;
 using AsteroidGame.Scripts.Domain.World;
 using AsteroidGame.Scripts.Domain.World.Bounds;
 using AsteroidGame.Scripts.Domain.World.Settings;
+using AsteroidGame.Scripts.Gameplay.Asteroids.Calculations;
+using AsteroidGame.Scripts.Gameplay.Asteroids.Contracts;
+using AsteroidGame.Scripts.Gameplay.Asteroids.Factories;
+using AsteroidGame.Scripts.Gameplay.Asteroids.Models;
+using AsteroidGame.Scripts.Gameplay.Asteroids.Pooling;
+using AsteroidGame.Scripts.Gameplay.Asteroids.Services;
+using AsteroidGame.Scripts.Gameplay.Asteroids.Spawning;
 using AsteroidGame.Scripts.Gameplay.Bullets.Contracts;
 using AsteroidGame.Scripts.Gameplay.Bullets.Factories;
+using AsteroidGame.Scripts.Gameplay.Bullets.Models;
 using AsteroidGame.Scripts.Gameplay.Bullets.Pooling;
 using AsteroidGame.Scripts.Gameplay.Bullets.Services;
 using AsteroidGame.Scripts.Gameplay.Bullets.Timers;
 using AsteroidGame.Scripts.Gameplay.Collision;
+using AsteroidGame.Scripts.Gameplay.Enemies.Factories;
 using AsteroidGame.Scripts.Gameplay.Factories;
 using AsteroidGame.Scripts.Gameplay.Game;
 using AsteroidGame.Scripts.Gameplay.Laser.Contracts;
@@ -33,10 +51,15 @@ using AsteroidGame.Scripts.Gameplay.Laser.Services;
 using AsteroidGame.Scripts.Gameplay.Player.Calculations;
 using AsteroidGame.Scripts.Gameplay.Player.Contracts;
 using AsteroidGame.Scripts.Gameplay.Player.Services;
+using AsteroidGame.Scripts.Gameplay.Random;
+using AsteroidGame.Scripts.Gameplay.Score;
 using AsteroidGame.Scripts.Gameplay.Time;
 using AsteroidGame.Scripts.Infrastructure.Configs;
+using AsteroidGame.Scripts.Infrastructure.Random;
 using AsteroidGame.Scripts.Infrastructure.Scenes;
 using AsteroidGame.Scripts.Input;
+using AsteroidGame.Scripts.Presentation.Asteroids;
+using AsteroidGame.Scripts.Presentation.Asteroids.Effects;
 using AsteroidGame.Scripts.Presentation.Bullets;
 using AsteroidGame.Scripts.Presentation.Camera;
 using AsteroidGame.Scripts.Presentation.Laser;
@@ -46,6 +69,7 @@ using AsteroidGame.Scripts.Signals.Bullets;
 using AsteroidGame.Scripts.Signals.Enemies;
 using AsteroidGame.Scripts.Signals.Game;
 using AsteroidGame.Scripts.Signals.Player;
+using AsteroidGame.Scripts.Signals.Score;
 using AsteroidGame.Scripts.UI.Common;
 using AsteroidGame.Scripts.UI.Game;
 using AsteroidGame.Scripts.UI.Player;
@@ -56,7 +80,13 @@ namespace AsteroidGame.Scripts.Installers
     {
         [SerializeField] private GameplaySettingsConfig _gameplaySettingsConfig;
         [SerializeField] private BulletView _bulletPrefab;
-        [SerializeField] private Transform _bulletRoot;
+        [SerializeField] private Transform _container;
+        
+        [Header("Asteroids")]
+        [SerializeField] private AsteroidView _largeAsteroidPrefab;
+        [SerializeField] private AsteroidView _mediumAsteroidPrefab;
+        [SerializeField] private AsteroidView _smallAsteroidPrefab;
+        [SerializeField] private AsteroidExplosionView _asteroidExplosionPrefab;
         
         public override void InstallBindings()
         {
@@ -68,7 +98,10 @@ namespace AsteroidGame.Scripts.Installers
             InstallCollision();
             InstallPlayer();
             InstallBullets();
+            InstallAsteroids();
+            InstallAsteroidEffects();
             InstallLaser();
+            InstallScore();
             InstallPresentation();
             InstallUi();
             InstallInfrastructure();
@@ -90,6 +123,8 @@ namespace AsteroidGame.Scripts.Installers
             Container.DeclareSignal<PlayerLaserFiredSignal>();
             Container.DeclareSignal<PlayerLaserChargesChangedSignal>();
             Container.DeclareSignal<EnemyHitByLaserSignal>().OptionalSubscriber();
+            Container.DeclareSignal<EnemyDestroyedSignal>().OptionalSubscriber();
+            Container.DeclareSignal<ScoreChangedSignal>().OptionalSubscriber();
 
             Container.Bind<PlayerBulletFiredSignal>().AsSingle();
         }
@@ -105,7 +140,9 @@ namespace AsteroidGame.Scripts.Installers
                     typeof(IPlayerCollisionSettingsData),
                     typeof(IPlayerLaserSettingsData),
                     typeof(IKeyboardInputSettingsData),
-                    typeof(IBulletSettingsData))
+                    typeof(IBulletSettingsData), 
+                    typeof(IAsteroidSettingsData), 
+                    typeof(IEnemyRewardSettingsData))
                 .FromInstance(_gameplaySettingsConfig)
                 .AsSingle();
 
@@ -179,8 +216,8 @@ namespace AsteroidGame.Scripts.Installers
             if (_bulletPrefab == null)
                 throw new InvalidOperationException("Bullet prefab is not assigned in GameInstaller.");
 
-            if (_bulletRoot == null)
-                throw new InvalidOperationException("Bullet root is not assigned in GameInstaller.");
+            if (_container == null)
+                throw new InvalidOperationException("Container is not assigned in GameInstaller.");
 
             Container.Bind<BulletSettings>().AsSingle();
             Container.Bind<BulletFireCooldown>().AsSingle();
@@ -194,7 +231,74 @@ namespace AsteroidGame.Scripts.Installers
             Container.BindFactory<Body2D, BulletModel, BulletModelFactory>();
             Container.BindFactory<BulletView, BulletViewPrefabFactory>()
                 .FromComponentInNewPrefab(_bulletPrefab)
-                .UnderTransform(_bulletRoot);
+                .UnderTransform(_container);
+            Container.BindFactory<
+                BulletModel,
+                CollisionBody,
+                IBulletView,
+                BulletInstance,
+                BulletInstanceZenjectFactory>();
+        }
+        
+        private void InstallAsteroids()
+        {
+            if (_largeAsteroidPrefab == null)
+                throw new InvalidOperationException("Large asteroid prefab is not assigned in GameInstaller.");
+
+            if (_mediumAsteroidPrefab == null)
+                throw new InvalidOperationException("Medium asteroid prefab is not assigned in GameInstaller.");
+
+            if (_smallAsteroidPrefab == null)
+                throw new InvalidOperationException("Small asteroid prefab is not assigned in GameInstaller.");
+
+            if (_container == null)
+                throw new InvalidOperationException("Container is not assigned in GameInstaller.");
+
+            Container.Bind<AsteroidSettings>().AsSingle();
+            Container.Bind<EnemyCollisionCategoryMapper>().AsSingle();
+            Container.Bind<AsteroidSpawnPointSelector>().AsSingle();
+            Container.Bind<AsteroidVelocityStabilizer>().AsSingle();
+            Container.Bind<AsteroidInstanceFactory>().AsSingle();
+            Container.Bind<IRandomValueProvider>().To<UnityRandomValueProvider>().AsSingle();
+            Container.Bind<IAsteroidViewFactory>()
+                .To<AsteroidViewFactoryAdapter>()
+                .AsSingle()
+                .WithArguments(
+                    _largeAsteroidPrefab,
+                    _mediumAsteroidPrefab,
+                    _smallAsteroidPrefab,
+                    _container);
+
+            Container.BindInterfacesAndSelfTo<AsteroidPool>().AsSingle();
+            Container.BindInterfacesAndSelfTo<AsteroidSpawnService>().AsSingle();
+            Container.BindInterfacesAndSelfTo<AsteroidSimulationService>().AsSingle();
+            Container.BindInterfacesAndSelfTo<AsteroidDestructionService>().AsSingle();
+            
+            Container.BindFactory<EnemyType, Body2D, EnemyModel, EnemyModelFactory>();
+            Container.BindFactory<EnemyModel, AsteroidModel, AsteroidModelFactory>();
+            Container.BindFactory<
+                AsteroidModel,
+                CollisionBody,
+                IAsteroidView,
+                AsteroidInstance,
+                AsteroidInstanceZenjectFactory>();
+        }
+        
+        private void InstallAsteroidEffects()
+        {
+            if (_asteroidExplosionPrefab == null)
+                throw new InvalidOperationException("Asteroid explosion prefab is not assigned in GameInstaller.");
+
+            if (_container == null)
+                throw new InvalidOperationException("Effects root is not assigned in GameInstaller.");
+
+            Container.BindFactory<AsteroidExplosionView, AsteroidExplosionViewPrefabFactory>()
+                .FromComponentInNewPrefab(_asteroidExplosionPrefab)
+                .UnderTransform(_container);
+            Container.BindFactory<AsteroidExplosionView, AsteroidExplosionInstance, AsteroidExplosionInstanceFactory>();
+            
+            Container.BindInterfacesAndSelfTo<AsteroidExplosionPool>().AsSingle();
+            Container.BindInterfacesAndSelfTo<AsteroidExplosionPresenter>().AsSingle();
         }
         
         private void InstallLaser()
@@ -206,6 +310,13 @@ namespace AsteroidGame.Scripts.Installers
                 .AsSingle();
             Container.BindInterfacesAndSelfTo<PlayerLaserShootingService>().AsSingle();
             Container.BindInterfacesAndSelfTo<PlayerLaserRechargeService>().AsSingle();
+        }
+        
+        private void InstallScore()
+        {
+            Container.Bind<ScoreState>().AsSingle();
+            Container.Bind<EnemyRewardTable>().AsSingle();
+            Container.BindInterfacesAndSelfTo<EnemyRewardService>().AsSingle();
         }
 
         private void InstallPresentation()

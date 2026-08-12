@@ -47,7 +47,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _root: {fileID: 1878077520117215251}
   _beamRoot: {fileID: 2835709193090155977}
-  _lengthScaleMultiplier: 1
+  _beamRenderer: {fileID: 7812058224798023830}
+  _visualStartOffset: 0.35
 --- !u!1001 &864227329035443908
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -111,6 +112,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7463691353887006290, guid: ec9711c2184334f418f12fdb7afb3c9e,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: fa6d98efdf993ae409b5c65affff892c,
+        type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -119,6 +126,12 @@ PrefabInstance:
 --- !u!4 &2835709193090155977 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3216744764215221005, guid: ec9711c2184334f418f12fdb7afb3c9e,
+    type: 3}
+  m_PrefabInstance: {fileID: 864227329035443908}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &7812058224798023830 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 7463691353887006290, guid: ec9711c2184334f418f12fdb7afb3c9e,
     type: 3}
   m_PrefabInstance: {fileID: 864227329035443908}
   m_PrefabAsset: {fileID: 0}

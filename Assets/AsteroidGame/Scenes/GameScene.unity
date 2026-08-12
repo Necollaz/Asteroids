@@ -783,7 +783,7 @@ GameObject:
   m_Component:
   - component: {fileID: 807384705}
   m_Layer: 0
-  m_Name: BulletsRoot
+  m_Name: Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1625,7 +1625,15 @@ MonoBehaviour:
     type: 2}
   _bulletPrefab: {fileID: 3547166936508296318, guid: 315e9287ff3b49a4393a84ae694c1f07,
     type: 3}
-  _bulletRoot: {fileID: 807384705}
+  _container: {fileID: 807384705}
+  _largeAsteroidPrefab: {fileID: 2262566051944977961, guid: eac32104900b2424e9e7e8f5809aebb1,
+    type: 3}
+  _mediumAsteroidPrefab: {fileID: 8046259664067286551, guid: 2c46db9bf39df6d4a9c1e79a0c786057,
+    type: 3}
+  _smallAsteroidPrefab: {fileID: 5639917822436793412, guid: d03086e67f4c3094a937868eca2688a5,
+    type: 3}
+  _asteroidExplosionPrefab: {fileID: 1222438759102082885, guid: 9b27e5732b225a44685c56826e0ffb4a,
+    type: 3}
 --- !u!1 &2101661931
 GameObject:
   m_ObjectHideFlags: 0

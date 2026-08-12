@@ -1,5 +1,7 @@
 using UnityEngine;
+using AsteroidGame.Scripts.Domain.Asteroids.Contracts;
 using AsteroidGame.Scripts.Domain.Bullets.Contracts;
+using AsteroidGame.Scripts.Domain.Enemies.Contracts;
 using AsteroidGame.Scripts.Domain.Player.Contracts;
 using AsteroidGame.Scripts.Infrastructure.Core;
 using AsteroidGame.Scripts.Input;
@@ -15,7 +17,9 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         IPlayerCollisionSettingsData,
         IPlayerLaserSettingsData,
         IKeyboardInputSettingsData,
-        IBulletSettingsData
+        IBulletSettingsData,
+        IAsteroidSettingsData,
+        IEnemyRewardSettingsData
     {
         [Header("Keyboard Input")]
         [SerializeField] private KeyCode _turnLeftKey = KeyCode.A;
@@ -61,6 +65,27 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         [SerializeField] private float _playerLaserHitHalfWidth = 0.15f;
         [SerializeField] private float _playerLaserVisualWidth = 0.25f;
         
+        [Header("Asteroids")]
+        [SerializeField] private int _asteroidPoolSize = 32;
+        [SerializeField] private int _maxActiveAsteroids = 12;
+        [SerializeField] private int _mediumFragmentsPerLarge = 2;
+        [SerializeField] private int _smallFragmentsPerMedium = 2;
+        [SerializeField] private float _asteroidSpawnIntervalSeconds = 2f;
+        [SerializeField] private float _asteroidSpawnMargin = 1f;
+        [SerializeField] private float _largeAsteroidRadius = 0.9f;
+        [SerializeField] private float _mediumAsteroidRadius = 0.55f;
+        [SerializeField] private float _smallAsteroidRadius = 0.3f;
+        [SerializeField] private float _largeAsteroidSpeed = 0.5f;
+        [SerializeField] private float _mediumAsteroidSpeed = 0.8f;
+        [SerializeField] private float _smallAsteroidSpeed = 1.1f;
+        [SerializeField] private float _asteroidSpeedReturnRate = 4f;
+
+        [Header("Enemy Rewards")]
+        [SerializeField] private int _largeAsteroidReward = 20;
+        [SerializeField] private int _mediumAsteroidReward = 50;
+        [SerializeField] private int _smallAsteroidReward = 100;
+        [SerializeField] private int _ufoReward = 200;
+        
         public KeyCode TurnLeftKey => _turnLeftKey;
         public KeyCode TurnRightKey => _turnRightKey;
         public KeyCode ThrustKey => _thrustKey;
@@ -95,7 +120,25 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         public float PlayerLaserLength => _playerLaserLength;
         public float PlayerLaserHitHalfWidth => _playerLaserHitHalfWidth;
         public float PlayerLaserVisualWidth => _playerLaserVisualWidth;
+        
+        public float AsteroidSpawnIntervalSeconds => _asteroidSpawnIntervalSeconds;
+        public float AsteroidSpawnMargin => _asteroidSpawnMargin;
+        public float LargeAsteroidRadius => _largeAsteroidRadius;
+        public float MediumAsteroidRadius => _mediumAsteroidRadius;
+        public float SmallAsteroidRadius => _smallAsteroidRadius;
+        public float LargeAsteroidSpeed => _largeAsteroidSpeed;
+        public float MediumAsteroidSpeed => _mediumAsteroidSpeed;
+        public float SmallAsteroidSpeed => _smallAsteroidSpeed;
+        public float AsteroidSpeedReturnRate => _asteroidSpeedReturnRate;
 
+        public int AsteroidPoolSize => _asteroidPoolSize;
+        public int MaxActiveAsteroids => _maxActiveAsteroids;
+        public int MediumFragmentsPerLarge => _mediumFragmentsPerLarge;
+        public int SmallFragmentsPerMedium => _smallFragmentsPerMedium;
+        public int LargeAsteroidReward => _largeAsteroidReward;
+        public int MediumAsteroidReward => _mediumAsteroidReward;
+        public int SmallAsteroidReward => _smallAsteroidReward;
+        public int UfoReward => _ufoReward;
         public int PoolSize => _bulletPoolSize;
         public int PlayerMaxHealth => _playerMaxHealth;
         public int PlayerMaxLaserCharges => _playerMaxLaserCharges;
