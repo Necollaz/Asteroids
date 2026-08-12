@@ -48,7 +48,7 @@ MonoBehaviour:
   _root: {fileID: 1878077520117215251}
   _beamRoot: {fileID: 2835709193090155977}
   _beamRenderer: {fileID: 7812058224798023830}
-  _visualStartOffset: 0.35
+  _visualStartOffset: 5
 --- !u!1001 &864227329035443908
 PrefabInstance:
   m_ObjectHideFlags: 0

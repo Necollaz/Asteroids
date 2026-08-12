@@ -7,7 +7,7 @@ using AsteroidGame.Scripts.Gameplay.Game;
 
 namespace AsteroidGame.Scripts.Gameplay.Collision
 {
-    public sealed class CollisionSimulationService : ITickable
+    public sealed class CollisionSimulationService : IFixedTickable
     {
         private readonly CollisionBodyRegistry _registry;
         private readonly CollisionCategoryPolicy _categoryPolicy;
@@ -31,7 +31,7 @@ namespace AsteroidGame.Scripts.Gameplay.Collision
             _pauseState = pauseState;
         }
 
-        void ITickable.Tick()
+        void IFixedTickable.FixedTick()
         {
             if (_pauseState.IsPaused)
                 return;

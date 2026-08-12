@@ -11,7 +11,7 @@ using AsteroidGame.Scripts.Gameplay.Time;
 
 namespace AsteroidGame.Scripts.Gameplay.Asteroids.Services
 {
-    public sealed class AsteroidSimulationService : ITickable
+    public sealed class AsteroidSimulationService : IFixedTickable
     {
         private readonly AsteroidPool _pool;
         private readonly WorldBounds _worldBounds;
@@ -36,12 +36,12 @@ namespace AsteroidGame.Scripts.Gameplay.Asteroids.Services
             _pauseState = pauseState;
         }
 
-        void ITickable.Tick()
+        void IFixedTickable.FixedTick()
         {
             if (_pauseState.IsPaused)
                 return;
-            
-            float deltaTime = _timeProvider.DeltaTime;
+
+            float deltaTime = _timeProvider.FixedDeltaTime;
             IReadOnlyList<AsteroidInstance> asteroids = _pool.ActiveAsteroids;
 
             for (int i = 0; i < asteroids.Count; i++)

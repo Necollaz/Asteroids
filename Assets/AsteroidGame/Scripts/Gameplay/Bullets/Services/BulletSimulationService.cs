@@ -10,7 +10,7 @@ using AsteroidGame.Scripts.Gameplay.Time;
 
 namespace AsteroidGame.Scripts.Gameplay.Bullets.Services
 {
-    public sealed class BulletSimulationService : ITickable
+    public sealed class BulletSimulationService : IFixedTickable
     {
         private readonly BulletPool _bulletPool;
         private readonly BulletSettings _settings;
@@ -32,7 +32,7 @@ namespace AsteroidGame.Scripts.Gameplay.Bullets.Services
             _pauseState = pauseState;
         }
 
-        void ITickable.Tick()
+        void IFixedTickable.FixedTick()
         {
             if (_pauseState.IsPaused)
                 return;

@@ -43,9 +43,9 @@ MonoBehaviour:
   _playerInitialLaserCharges: 3
   _playerLaserRechargeSeconds: 4
   _playerLaserVisibleSeconds: 1
-  _playerLaserLength: 3
-  _playerLaserHitHalfWidth: 0.15
-  _playerLaserVisualWidth: 0.25
+  _playerLaserLength: 20
+  _playerLaserHitHalfWidth: 0.2
+  _playerLaserVisualWidth: 0.4
   _asteroidPoolSize: 32
   _maxActiveAsteroids: 12
   _mediumFragmentsPerLarge: 2

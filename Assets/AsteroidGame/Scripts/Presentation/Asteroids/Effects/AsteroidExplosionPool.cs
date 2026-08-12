@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Zenject;
 using AsteroidGame.Scripts.Domain.Physics.Models;
@@ -8,7 +9,7 @@ namespace AsteroidGame.Scripts.Presentation.Asteroids.Effects
 {
     public sealed class AsteroidExplosionPool : IInitializable, ITickable
     {
-        private const int PoolSize = 8;
+        private const int PoolSize = 32;
         
         private readonly AsteroidExplosionViewPrefabFactory _viewFactory;
         private readonly AsteroidExplosionInstanceFactory _instanceFactory;
@@ -55,10 +56,7 @@ namespace AsteroidGame.Scripts.Presentation.Asteroids.Effects
 
         public void Play(Vector2D position)
         {
-            if (_availableEffects.Count == 0)
-                return;
-            
-            AsteroidExplosionInstance effect = _availableEffects.Dequeue();
+            AsteroidExplosionInstance effect = GetAvailableEffect();
             _activeEffects.Add(effect);
             effect.Play(position);
         }
@@ -71,10 +69,27 @@ namespace AsteroidGame.Scripts.Presentation.Asteroids.Effects
 
             return instance;
         }
+        
+        private AsteroidExplosionInstance GetAvailableEffect()
+        {
+            if (_availableEffects.Count > 0)
+                return _availableEffects.Dequeue();
+
+            if (_activeEffects.Count == 0)
+                throw new InvalidOperationException("Asteroid explosion pool has no effects.");
+
+            AsteroidExplosionInstance oldestEffect = _activeEffects[0];
+            _activeEffects.RemoveAt(0);
+            oldestEffect.Hide();
+
+            return oldestEffect;
+        }
 
         private void Release(AsteroidExplosionInstance effect)
         {
-            _activeEffects.Remove(effect);
+            if (!_activeEffects.Remove(effect))
+                throw new InvalidOperationException("Asteroid explosion effect is already released.");
+
             effect.Hide();
             _availableEffects.Enqueue(effect);
         }

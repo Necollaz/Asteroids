@@ -10,7 +10,6 @@ using AsteroidGame.Scripts.Gameplay.Game;
 using AsteroidGame.Scripts.Gameplay.Player.Contracts;
 using AsteroidGame.Scripts.Gameplay.Time;
 using AsteroidGame.Scripts.Input;
-using AsteroidGame.Scripts.Signals.Bullets;
 
 namespace AsteroidGame.Scripts.Gameplay.Bullets.Services
 {
@@ -26,8 +25,6 @@ namespace AsteroidGame.Scripts.Gameplay.Bullets.Services
         private readonly BulletSettings _bulletSettings;
         private readonly BulletPool _bulletPool;
         private readonly BulletFireCooldown _bulletFireCooldown;
-        private readonly SignalBus _signalBus;
-        private readonly PlayerBulletFiredSignal _bulletFiredSignal;
 
         public PlayerBulletShootingService(
             IPlayerInput playerInput,
@@ -39,9 +36,7 @@ namespace AsteroidGame.Scripts.Gameplay.Bullets.Services
             PhysicsValueFactory physicsValueFactory,
             BulletSettings bulletSettings,
             BulletPool bulletPool,
-            BulletFireCooldown bulletFireCooldown,
-            SignalBus signalBus,
-            PlayerBulletFiredSignal bulletFiredSignal)
+            BulletFireCooldown bulletFireCooldown)
         {
             _playerInput = playerInput;
             _playerBodyProvider = playerBodyProvider;
@@ -53,8 +48,6 @@ namespace AsteroidGame.Scripts.Gameplay.Bullets.Services
             _bulletSettings = bulletSettings;
             _bulletPool = bulletPool;
             _bulletFireCooldown = bulletFireCooldown;
-            _signalBus = signalBus;
-            _bulletFiredSignal = bulletFiredSignal;
         }
 
         void ITickable.Tick()
@@ -87,7 +80,6 @@ namespace AsteroidGame.Scripts.Gameplay.Bullets.Services
                 return;
 
             _bulletFireCooldown.Restart();
-            _signalBus.Fire(_bulletFiredSignal);
         }
     }
 }

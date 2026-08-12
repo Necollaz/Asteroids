@@ -12,7 +12,7 @@ using AsteroidGame.Scripts.Input;
 
 namespace AsteroidGame.Scripts.Gameplay.Player.Services
 {
-    public sealed class PlayerMovementService : ITickable, IPlayerStateProvider, IPlayerBodyProvider
+    public sealed class PlayerMovementService : IFixedTickable, IPlayerStateProvider, IPlayerBodyProvider
     {
         private readonly PlayerModel _playerModel;
         private readonly PlayerMovementSettings _settings;
@@ -49,17 +49,16 @@ namespace AsteroidGame.Scripts.Gameplay.Player.Services
         public Body2D Body => _playerModel.Body;
         public PlayerSnapshot Snapshot => _snapshotFactory.Create(_playerModel);
 
-        void ITickable.Tick()
+        void IFixedTickable.FixedTick()
         {
             if (_pauseState.IsPaused)
                 return;
 
-            float deltaTime = _timeProvider.DeltaTime;
+            float deltaTime = _timeProvider.FixedDeltaTime;
 
             if (!_controlState.CanControl)
             {
                 MoveWithoutControl(deltaTime);
-                
                 return;
             }
 

@@ -1,105 +1,60 @@
-using System;
-using System.Threading;
-using Cysharp.Threading.Tasks;
 using Zenject;
-using AsteroidGame.Scripts.Domain.Physics.Models;
 using AsteroidGame.Scripts.Domain.Player.Settings;
 using AsteroidGame.Scripts.Gameplay.Game;
-using AsteroidGame.Scripts.Gameplay.Laser.Contracts;
-using AsteroidGame.Scripts.Gameplay.Time;
-using AsteroidGame.Scripts.Signals.Player;
+using AsteroidGame.Scripts.Gameplay.Laser.States;
 
 namespace AsteroidGame.Scripts.Presentation.Laser
 {
-    public sealed class PlayerLaserVisualPresenter : IInitializable, IDisposable
+    public sealed class PlayerLaserVisualPresenter : IInitializable, ITickable
     {
         private readonly PlayerLaserView _view;
-        private readonly ILaserSpawnPointProvider _spawnPointProvider;
+        private readonly PlayerLaserState _laserState;
         private readonly IGameplayPauseState _gameplayPauseState;
-        private readonly ITimeProvider _timeProvider;
         private readonly PlayerLaserSettings _laserSettings;
-        private readonly SignalBus _signalBus;
 
-        private CancellationTokenSource _lifetimeCancellation;
-        private CancellationTokenSource _showCancellation;
+        private bool _isVisible;
 
         public PlayerLaserVisualPresenter(
             PlayerLaserView view,
-            ILaserSpawnPointProvider spawnPointProvider,
+            PlayerLaserState laserState,
             IGameplayPauseState gameplayPauseState,
-            ITimeProvider timeProvider,
-            PlayerLaserSettings laserSettings,
-            SignalBus signalBus)
+            PlayerLaserSettings laserSettings)
         {
             _view = view;
-            _spawnPointProvider = spawnPointProvider;
+            _laserState = laserState;
             _gameplayPauseState = gameplayPauseState;
-            _timeProvider = timeProvider;
             _laserSettings = laserSettings;
-            _signalBus = signalBus;
         }
 
         void IInitializable.Initialize()
         {
-            _lifetimeCancellation = new CancellationTokenSource();
-            _signalBus.Subscribe<PlayerLaserFiredSignal>(HandleLaserFired);
             _view.Hide();
+            _isVisible = false;
         }
 
-        void IDisposable.Dispose()
+        void ITickable.Tick()
         {
-            _signalBus.Unsubscribe<PlayerLaserFiredSignal>(HandleLaserFired);
+            if (_gameplayPauseState.IsPaused)
+                return;
 
-            _showCancellation?.Cancel();
-            _showCancellation?.Dispose();
-            _showCancellation = null;
-
-            _lifetimeCancellation?.Cancel();
-            _lifetimeCancellation?.Dispose();
-            _lifetimeCancellation = null;
-        }
-
-        private void HandleLaserFired(PlayerLaserFiredSignal signal)
-        {
-            _showCancellation?.Cancel();
-            _showCancellation?.Dispose();
-            _showCancellation = CancellationTokenSource.CreateLinkedTokenSource(_lifetimeCancellation.Token);
-
-            ShowLaserAsync(signal, _showCancellation.Token).Forget();
-        }
-
-        private async UniTask ShowLaserAsync(PlayerLaserFiredSignal signal, CancellationToken cancellationToken)
-        {
-            float remainingSeconds = signal.VisibleSeconds;
-
-            try
+            if (!_laserState.IsActive)
             {
-                while (remainingSeconds > 0f)
-                {
-                    if (!_gameplayPauseState.IsPaused)
-                    {
-                        RefreshLaser(signal.VisualWidth);
-                        
-                        remainingSeconds -= _timeProvider.DeltaTime;
-                    }
-
-                    await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
-                }
-
-                _view.Hide();
+                HideIfVisible();
+                
+                return;
             }
-            catch (OperationCanceledException)
-            {
-            }
+
+            _view.Show(_laserState.Segment.StartPosition, _laserState.Segment.EndPosition, _laserSettings.VisualWidth);
+            _isVisible = true;
         }
 
-        private void RefreshLaser(float visualWidth)
+        private void HideIfVisible()
         {
-            Vector2D startPosition = _spawnPointProvider.Position;
-            Vector2D direction = _spawnPointProvider.Direction;
-            Vector2D endPosition = startPosition.Add(direction.Multiply(_laserSettings.Length));
+            if (!_isVisible)
+                return;
 
-            _view.Show(startPosition, endPosition, visualWidth);
+            _view.Hide();
+            _isVisible = false;
         }
     }
 }

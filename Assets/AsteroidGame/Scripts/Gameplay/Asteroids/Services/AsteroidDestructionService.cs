@@ -54,7 +54,7 @@ namespace AsteroidGame.Scripts.Gameplay.Asteroids.Services
 
             if (direction.SqrMagnitude <= float.Epsilon)
                 return _physicsValueFactory.CreateVector(0f, 1f);
-            
+
             return direction.Normalized;
         }
         
@@ -66,14 +66,15 @@ namespace AsteroidGame.Scripts.Gameplay.Asteroids.Services
         {
             if (!_pool.ReleaseByCollisionBody(enemyBody, out AsteroidInstance asteroid))
                 return;
-            
+
             EnemyType destroyedType = asteroid.Type;
             Vector2D position = asteroid.Body.Position;
+
             _signalBus.Fire(new EnemyDestroyedSignal(destroyedType, position));
-            
+
             if (!_settings.TryGetFragmentType(destroyedType, out EnemyType fragmentType, out int count))
                 return;
-            
+
             SpawnFragments(fragmentType, count, position);
         }
 
@@ -84,8 +85,10 @@ namespace AsteroidGame.Scripts.Gameplay.Asteroids.Services
                 Vector2D direction = CreateRandomDirection();
                 float speed = _settings.GetSpeed(fragmentType);
                 Velocity velocity = _physicsValueFactory.CreateVelocity(direction.Multiply(speed));
+
                 _pool.TrySpawn(fragmentType, position, velocity, 0f);
             }
         }
+
     }
 }

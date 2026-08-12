@@ -1,9 +1,9 @@
 using System;
+using UnityEngine;
+using Zenject;
 using AsteroidGame.Scripts.Domain.Asteroids.Contracts;
 using AsteroidGame.Scripts.Domain.Asteroids.Models;
 using AsteroidGame.Scripts.Domain.Asteroids.Settings;
-using UnityEngine;
-using Zenject;
 using AsteroidGame.Scripts.Domain.Bullets.Contracts;
 using AsteroidGame.Scripts.Domain.Bullets.Models;
 using AsteroidGame.Scripts.Domain.Bullets.Settings;
@@ -46,8 +46,10 @@ using AsteroidGame.Scripts.Gameplay.Collision;
 using AsteroidGame.Scripts.Gameplay.Enemies.Factories;
 using AsteroidGame.Scripts.Gameplay.Factories;
 using AsteroidGame.Scripts.Gameplay.Game;
+using AsteroidGame.Scripts.Gameplay.Laser.Calculations;
 using AsteroidGame.Scripts.Gameplay.Laser.Contracts;
 using AsteroidGame.Scripts.Gameplay.Laser.Services;
+using AsteroidGame.Scripts.Gameplay.Laser.States;
 using AsteroidGame.Scripts.Gameplay.Player.Calculations;
 using AsteroidGame.Scripts.Gameplay.Player.Contracts;
 using AsteroidGame.Scripts.Gameplay.Player.Services;
@@ -65,7 +67,6 @@ using AsteroidGame.Scripts.Presentation.Camera;
 using AsteroidGame.Scripts.Presentation.Laser;
 using AsteroidGame.Scripts.Presentation.Player.Presenters;
 using AsteroidGame.Scripts.Presentation.Player.Views;
-using AsteroidGame.Scripts.Signals.Bullets;
 using AsteroidGame.Scripts.Signals.Enemies;
 using AsteroidGame.Scripts.Signals.Game;
 using AsteroidGame.Scripts.Signals.Player;
@@ -106,6 +107,7 @@ namespace AsteroidGame.Scripts.Installers
             InstallUi();
             InstallInfrastructure();
             InstallInput();
+            InstallExecutionOrder();
         }
 
         private void InstallSignalBus()
@@ -118,15 +120,12 @@ namespace AsteroidGame.Scripts.Installers
             Container.DeclareSignal<PlayerInvulnerabilityEndedSignal>();
             Container.DeclareSignal<GameDefeatStartedSignal>();
             Container.DeclareSignal<GameRestartRequestedSignal>();
-            Container.DeclareSignal<PlayerBulletFiredSignal>().OptionalSubscriber();
             Container.DeclareSignal<EnemyHitByBulletSignal>().OptionalSubscriber();
             Container.DeclareSignal<PlayerLaserFiredSignal>();
             Container.DeclareSignal<PlayerLaserChargesChangedSignal>();
             Container.DeclareSignal<EnemyHitByLaserSignal>().OptionalSubscriber();
             Container.DeclareSignal<EnemyDestroyedSignal>().OptionalSubscriber();
             Container.DeclareSignal<ScoreChangedSignal>().OptionalSubscriber();
-
-            Container.Bind<PlayerBulletFiredSignal>().AsSingle();
         }
 
         private void InstallSettings()
@@ -308,8 +307,16 @@ namespace AsteroidGame.Scripts.Installers
                 .To<PlayerLaserSpawnPointView>()
                 .FromComponentInHierarchy()
                 .AsSingle();
+            Container.Bind<PlayerLaserState>().AsSingle();
+            Container.Bind<PlayerLaserBeamGeometry>().AsSingle();
+            Container.Bind<PlayerLaserHitArea>().AsSingle();
+
             Container.BindInterfacesAndSelfTo<PlayerLaserShootingService>().AsSingle();
+            Container.BindInterfacesAndSelfTo<PlayerLaserActivationService>().AsSingle();
+            Container.BindInterfacesAndSelfTo<PlayerLaserDamageService>().AsSingle();
+            Container.BindInterfacesAndSelfTo<PlayerLaserLifetimeService>().AsSingle();
             Container.BindInterfacesAndSelfTo<PlayerLaserRechargeService>().AsSingle();
+
         }
         
         private void InstallScore()
@@ -350,6 +357,18 @@ namespace AsteroidGame.Scripts.Installers
 
         private void InstallInput() => Container.Bind<IPlayerInput>().FromComponentInHierarchy().AsSingle();
 
+        private void InstallExecutionOrder()
+        {
+            Container.BindExecutionOrder<PlayerMovementService>(-100);
+            Container.BindExecutionOrder<AsteroidSimulationService>(-90);
+            Container.BindExecutionOrder<BulletSimulationService>(-80);
+            Container.BindExecutionOrder<PlayerLaserActivationService>(-70);
+            Container.BindExecutionOrder<PlayerLaserDamageService>(-60);
+            Container.BindExecutionOrder<PlayerLaserVisualPresenter>(-50);
+            Container.BindExecutionOrder<PlayerLaserLifetimeService>(-40);
+            Container.BindExecutionOrder<CollisionSimulationService>(-30);
+        }
+        
         private PlayerModel CreatePlayerModel(InjectContext context)
         {
             DiContainer container = context.Container;
