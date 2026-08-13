@@ -1,5 +1,6 @@
 using System;
 using Zenject;
+using AsteroidGame.Scripts.Domain.Enemies.Types;
 using AsteroidGame.Scripts.Signals.Enemies;
 
 namespace AsteroidGame.Scripts.Presentation.Asteroids.Effects
@@ -19,6 +20,17 @@ namespace AsteroidGame.Scripts.Presentation.Asteroids.Effects
 
         void IDisposable.Dispose() => _signalBus.Unsubscribe<EnemyDestroyedSignal>(HandleEnemyDestroyed);
 
-        private void HandleEnemyDestroyed(EnemyDestroyedSignal signal) => _pool.Play(signal.Position);
+        private void HandleEnemyDestroyed(EnemyDestroyedSignal signal)
+        {
+            if (!IsAsteroid(signal.EnemyType))
+                return;
+
+            _pool.Play(signal.Position);
+        }
+
+        private bool IsAsteroid(EnemyType enemyType) =>
+            enemyType == EnemyType.LargeAsteroid ||
+            enemyType == EnemyType.MediumAsteroid ||
+            enemyType == EnemyType.SmallAsteroid;
     }
 }

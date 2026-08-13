@@ -18,6 +18,7 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
             ValidateKeyboardInput();
             ValidateBullets();
             ValidateAsteroids();
+            ValidateUfo();
         }
 
         private void ValidatePlayerMovement()
@@ -127,6 +128,36 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
             
             if (_config.AsteroidSpeedReturnRate <= 0f)
                 throw new InvalidOperationException("Asteroid speed return rate must be greater than zero.");
+        }
+        
+        private void ValidateUfo()
+        {
+            if (_config.UfoPoolSize <= 0)
+                throw new InvalidOperationException("UFO pool size must be greater than zero.");
+
+            if (_config.MaxActiveUfo <= 0)
+                throw new InvalidOperationException("Max active UFO must be greater than zero.");
+
+            if (_config.UfoSpawnIntervalSeconds <= 0f)
+                throw new InvalidOperationException("UFO spawn interval seconds must be greater than zero.");
+
+            if (_config.UfoSpawnMargin < 0f)
+                throw new InvalidOperationException("UFO spawn margin cannot be negative.");
+
+            if (_config.UfoSpeed <= 0f)
+                throw new InvalidOperationException("UFO speed must be greater than zero.");
+
+            if (_config.UfoCollisionRadius <= 0f)
+                throw new InvalidOperationException("UFO collision radius must be greater than zero.");
+            
+            if (_config.UfoMaxTiltDegrees < 0f)
+                throw new InvalidOperationException("UFO max tilt degrees cannot be negative.");
+            
+            if (_config.UfoKnockbackSeconds <= 0f)
+                throw new InvalidOperationException("UFO knockback seconds must be greater than zero.");
+
+            if (_config.UfoKnockbackDamping < 0f)
+                throw new InvalidOperationException("UFO knockback damping cannot be negative.");
         }
 
         private void ValidateKeyboardInput()

@@ -47,10 +47,10 @@ MonoBehaviour:
   _playerLaserHitHalfWidth: 0.2
   _playerLaserVisualWidth: 0.4
   _asteroidPoolSize: 32
-  _maxActiveAsteroids: 12
+  _maxActiveAsteroids: 8
   _mediumFragmentsPerLarge: 2
   _smallFragmentsPerMedium: 2
-  _asteroidSpawnIntervalSeconds: 2
+  _asteroidSpawnIntervalSeconds: 2.8
   _asteroidSpawnMargin: 1
   _largeAsteroidRadius: 0.9
   _mediumAsteroidRadius: 0.55
@@ -59,6 +59,13 @@ MonoBehaviour:
   _mediumAsteroidSpeed: 0.8
   _smallAsteroidSpeed: 1.1
   _asteroidSpeedReturnRate: 3
+  _ufoPoolSize: 4
+  _maxActiveUfo: 1
+  _ufoSpawnIntervalSeconds: 8
+  _ufoSpawnMargin: 1.5
+  _ufoSpeed: 1.4
+  _ufoCollisionRadius: 0.45
+  _ufoMaxTiltDegrees: 15
   _largeAsteroidReward: 20
   _mediumAsteroidReward: 50
   _smallAsteroidReward: 100

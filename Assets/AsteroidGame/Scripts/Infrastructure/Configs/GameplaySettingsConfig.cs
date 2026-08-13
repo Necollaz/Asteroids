@@ -3,6 +3,7 @@ using AsteroidGame.Scripts.Domain.Asteroids.Contracts;
 using AsteroidGame.Scripts.Domain.Bullets.Contracts;
 using AsteroidGame.Scripts.Domain.Enemies.Contracts;
 using AsteroidGame.Scripts.Domain.Player.Contracts;
+using AsteroidGame.Scripts.Domain.Ufo.Contracts;
 using AsteroidGame.Scripts.Infrastructure.Core;
 using AsteroidGame.Scripts.Input;
 
@@ -19,7 +20,8 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         IKeyboardInputSettingsData,
         IBulletSettingsData,
         IAsteroidSettingsData,
-        IEnemyRewardSettingsData
+        IEnemyRewardSettingsData,
+        IUfoSettingsData
     {
         [Header("Keyboard Input")]
         [SerializeField] private KeyCode _turnLeftKey = KeyCode.A;
@@ -79,6 +81,17 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         [SerializeField] private float _mediumAsteroidSpeed = 0.8f;
         [SerializeField] private float _smallAsteroidSpeed = 1.1f;
         [SerializeField] private float _asteroidSpeedReturnRate = 4f;
+        
+        [Header("UFO")]
+        [SerializeField] private int _ufoPoolSize = 4;
+        [SerializeField] private int _maxActiveUfo = 1;
+        [SerializeField] private float _ufoSpawnIntervalSeconds = 8f;
+        [SerializeField] private float _ufoSpawnMargin = 1.5f;
+        [SerializeField] private float _ufoSpeed = 1.4f;
+        [SerializeField] private float _ufoCollisionRadius = 0.45f;
+        [SerializeField] private float _ufoMaxTiltDegrees = 15f;
+        [SerializeField] private float _ufoKnockbackSeconds = 0.6f;
+        [SerializeField] private float _ufoKnockbackDamping = 4f;
 
         [Header("Enemy Rewards")]
         [SerializeField] private int _largeAsteroidReward = 20;
@@ -131,6 +144,16 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         public float SmallAsteroidSpeed => _smallAsteroidSpeed;
         public float AsteroidSpeedReturnRate => _asteroidSpeedReturnRate;
 
+        public float UfoSpawnIntervalSeconds => _ufoSpawnIntervalSeconds;
+        public float UfoSpawnMargin => _ufoSpawnMargin;
+        public float UfoSpeed => _ufoSpeed;
+        public float UfoCollisionRadius => _ufoCollisionRadius;
+        public float UfoMaxTiltDegrees => _ufoMaxTiltDegrees;
+        public float UfoKnockbackSeconds => _ufoKnockbackSeconds;
+        public float UfoKnockbackDamping => _ufoKnockbackDamping;
+        
+        public int UfoPoolSize => _ufoPoolSize;
+        public int MaxActiveUfo => _maxActiveUfo;
         public int AsteroidPoolSize => _asteroidPoolSize;
         public int MaxActiveAsteroids => _maxActiveAsteroids;
         public int MediumFragmentsPerLarge => _mediumFragmentsPerLarge;

@@ -26,6 +26,9 @@ using AsteroidGame.Scripts.Domain.Player.Models;
 using AsteroidGame.Scripts.Domain.Player.Settings;
 using AsteroidGame.Scripts.Domain.Player.States;
 using AsteroidGame.Scripts.Domain.Score;
+using AsteroidGame.Scripts.Domain.Ufo.Contracts;
+using AsteroidGame.Scripts.Domain.Ufo.Models;
+using AsteroidGame.Scripts.Domain.Ufo.Settings;
 using AsteroidGame.Scripts.Domain.World;
 using AsteroidGame.Scripts.Domain.World.Bounds;
 using AsteroidGame.Scripts.Domain.World.Settings;
@@ -35,7 +38,6 @@ using AsteroidGame.Scripts.Gameplay.Asteroids.Factories;
 using AsteroidGame.Scripts.Gameplay.Asteroids.Models;
 using AsteroidGame.Scripts.Gameplay.Asteroids.Pooling;
 using AsteroidGame.Scripts.Gameplay.Asteroids.Services;
-using AsteroidGame.Scripts.Gameplay.Asteroids.Spawning;
 using AsteroidGame.Scripts.Gameplay.Bullets.Contracts;
 using AsteroidGame.Scripts.Gameplay.Bullets.Factories;
 using AsteroidGame.Scripts.Gameplay.Bullets.Models;
@@ -44,6 +46,7 @@ using AsteroidGame.Scripts.Gameplay.Bullets.Services;
 using AsteroidGame.Scripts.Gameplay.Bullets.Timers;
 using AsteroidGame.Scripts.Gameplay.Collision;
 using AsteroidGame.Scripts.Gameplay.Enemies.Factories;
+using AsteroidGame.Scripts.Gameplay.Enemies.Spawning;
 using AsteroidGame.Scripts.Gameplay.Factories;
 using AsteroidGame.Scripts.Gameplay.Game;
 using AsteroidGame.Scripts.Gameplay.Laser.Calculations;
@@ -56,6 +59,13 @@ using AsteroidGame.Scripts.Gameplay.Player.Services;
 using AsteroidGame.Scripts.Gameplay.Random;
 using AsteroidGame.Scripts.Gameplay.Score;
 using AsteroidGame.Scripts.Gameplay.Time;
+using AsteroidGame.Scripts.Gameplay.Ufo.Calculations;
+using AsteroidGame.Scripts.Gameplay.Ufo.Contracts;
+using AsteroidGame.Scripts.Gameplay.Ufo.Factories;
+using AsteroidGame.Scripts.Gameplay.Ufo.Models;
+using AsteroidGame.Scripts.Gameplay.Ufo.Pooling;
+using AsteroidGame.Scripts.Gameplay.Ufo.Services;
+using AsteroidGame.Scripts.Gameplay.Ufo.States;
 using AsteroidGame.Scripts.Infrastructure.Configs;
 using AsteroidGame.Scripts.Infrastructure.Random;
 using AsteroidGame.Scripts.Infrastructure.Scenes;
@@ -67,6 +77,9 @@ using AsteroidGame.Scripts.Presentation.Camera;
 using AsteroidGame.Scripts.Presentation.Laser;
 using AsteroidGame.Scripts.Presentation.Player.Presenters;
 using AsteroidGame.Scripts.Presentation.Player.Views;
+using AsteroidGame.Scripts.Presentation.Ufo;
+using AsteroidGame.Scripts.Presentation.Ufo.Effects;
+using AsteroidGame.Scripts.Presentation.Ufo.Effects.Factories;
 using AsteroidGame.Scripts.Signals.Enemies;
 using AsteroidGame.Scripts.Signals.Game;
 using AsteroidGame.Scripts.Signals.Player;
@@ -74,6 +87,7 @@ using AsteroidGame.Scripts.Signals.Score;
 using AsteroidGame.Scripts.UI.Common;
 using AsteroidGame.Scripts.UI.Game;
 using AsteroidGame.Scripts.UI.Player;
+using AsteroidSpawnPointSelector = AsteroidGame.Scripts.Gameplay.Asteroids.Spawning.AsteroidSpawnPointSelector;
 
 namespace AsteroidGame.Scripts.Installers
 {
@@ -89,6 +103,10 @@ namespace AsteroidGame.Scripts.Installers
         [SerializeField] private AsteroidView _smallAsteroidPrefab;
         [SerializeField] private AsteroidExplosionView _asteroidExplosionPrefab;
         
+        [Header("UFO")]
+        [SerializeField] private UfoView _ufoPrefab;
+        [SerializeField] private UfoExplosionView _ufoExplosionPrefab;
+        
         public override void InstallBindings()
         {
             InstallSignalBus();
@@ -100,6 +118,8 @@ namespace AsteroidGame.Scripts.Installers
             InstallPlayer();
             InstallBullets();
             InstallAsteroids();
+            InstallUfo();
+            InstallUfoEffects();
             InstallAsteroidEffects();
             InstallLaser();
             InstallScore();
@@ -141,7 +161,8 @@ namespace AsteroidGame.Scripts.Installers
                     typeof(IKeyboardInputSettingsData),
                     typeof(IBulletSettingsData), 
                     typeof(IAsteroidSettingsData), 
-                    typeof(IEnemyRewardSettingsData))
+                    typeof(IEnemyRewardSettingsData),
+                    typeof(IUfoSettingsData))
                 .FromInstance(_gameplaySettingsConfig)
                 .AsSingle();
 
@@ -163,6 +184,7 @@ namespace AsteroidGame.Scripts.Installers
             Container.Bind<IWorldSettingsData>().To<CameraBoundsView>().FromResolve();
             Container.Bind<WorldSettings>().AsSingle();
             Container.Bind<WorldBounds>().AsSingle();
+            Container.Bind<OutsideWorldSpawnPointSelector>().AsSingle();
         }
 
         private void InstallGameState() => Container.BindInterfacesAndSelfTo<GameStateService>().AsSingle();
@@ -258,7 +280,6 @@ namespace AsteroidGame.Scripts.Installers
             Container.Bind<AsteroidSpawnPointSelector>().AsSingle();
             Container.Bind<AsteroidVelocityStabilizer>().AsSingle();
             Container.Bind<AsteroidInstanceFactory>().AsSingle();
-            Container.Bind<IRandomValueProvider>().To<UnityRandomValueProvider>().AsSingle();
             Container.Bind<IAsteroidViewFactory>()
                 .To<AsteroidViewFactoryAdapter>()
                 .AsSingle()
@@ -281,6 +302,57 @@ namespace AsteroidGame.Scripts.Installers
                 IAsteroidView,
                 AsteroidInstance,
                 AsteroidInstanceZenjectFactory>();
+        }
+        
+        private void InstallUfo()
+        {
+            if (_ufoPrefab == null)
+                throw new InvalidOperationException("UFO prefab is not assigned in GameInstaller.");
+
+            if (_container == null)
+                throw new InvalidOperationException("UFO root is not assigned in GameInstaller.");
+
+            Container.Bind<UfoSettings>().AsSingle();
+            Container.Bind<UfoInstanceFactory>().AsSingle();
+            Container.Bind<IUfoViewFactory>()
+                .To<UfoViewFactoryAdapter>()
+                .AsSingle()
+                .WithArguments(_ufoPrefab, _container);
+            Container.Bind<UfoTiltCalculator>().AsSingle();
+            Container.Bind<UfoKnockbackMovement>().AsSingle();
+            Container.Bind<UfoKnockbackService>().AsSingle();
+
+            Container.BindInterfacesAndSelfTo<UfoPool>().AsSingle();
+            Container.BindInterfacesAndSelfTo<UfoSpawnService>().AsSingle();
+            Container.BindInterfacesAndSelfTo<UfoSimulationService>().AsSingle();
+            Container.BindInterfacesAndSelfTo<UfoDestructionService>().AsSingle();
+
+            Container.BindFactory<EnemyModel, UfoModel, UfoModelFactory>();
+            Container.BindFactory<
+                UfoModel,
+                CollisionBody,
+                IUfoView,
+                UfoKnockbackState,
+                UfoInstance,
+                UfoInstanceZenjectFactory>();
+            Container.BindFactory<UfoKnockbackState, UfoKnockbackStateFactory>();
+        }
+        
+        private void InstallUfoEffects()
+        {
+            if (_ufoExplosionPrefab == null)
+                throw new InvalidOperationException("UFO explosion prefab is not assigned in GameInstaller.");
+
+            if (_container == null)
+                throw new InvalidOperationException("Effects root is not assigned in GameInstaller.");
+
+            Container.BindFactory<UfoExplosionView, UfoExplosionViewPrefabFactory>()
+                .FromComponentInNewPrefab(_ufoExplosionPrefab)
+                .UnderTransform(_container);
+            Container.BindFactory<UfoExplosionView, UfoExplosionInstance, UfoExplosionInstanceFactory>();
+
+            Container.BindInterfacesAndSelfTo<UfoExplosionPool>().AsSingle();
+            Container.BindInterfacesAndSelfTo<UfoExplosionPresenter>().AsSingle();
         }
         
         private void InstallAsteroidEffects()
@@ -353,7 +425,11 @@ namespace AsteroidGame.Scripts.Installers
             Container.BindInterfacesAndSelfTo<PlayerLaserHudPresenter>().AsSingle();
         }
 
-        private void InstallInfrastructure() => Container.BindInterfacesAndSelfTo<SceneRestartService>().AsSingle();
+        private void InstallInfrastructure()
+        {
+            Container.Bind<IRandomValueProvider>().To<UnityRandomValueProvider>().AsSingle();
+            Container.BindInterfacesAndSelfTo<SceneRestartService>().AsSingle();
+        }
 
         private void InstallInput() => Container.Bind<IPlayerInput>().FromComponentInHierarchy().AsSingle();
 
@@ -361,6 +437,7 @@ namespace AsteroidGame.Scripts.Installers
         {
             Container.BindExecutionOrder<PlayerMovementService>(-100);
             Container.BindExecutionOrder<AsteroidSimulationService>(-90);
+            Container.BindExecutionOrder<UfoSimulationService>(-90);
             Container.BindExecutionOrder<BulletSimulationService>(-80);
             Container.BindExecutionOrder<PlayerLaserActivationService>(-70);
             Container.BindExecutionOrder<PlayerLaserDamageService>(-60);

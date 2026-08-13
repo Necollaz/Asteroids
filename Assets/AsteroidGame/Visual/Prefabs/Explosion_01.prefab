@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7013497536058755500}
   - component: {fileID: 8082279374731052655}
   - component: {fileID: 4957195200250220185}
-  - component: {fileID: 1231662855600029284}
+  - component: {fileID: -7494877116273844692}
   m_Layer: 0
   m_Name: Explosion_01
   m_TagString: Untagged
@@ -26,12 +26,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7665670122406291894}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8082279374731052655
 SpriteRenderer:
@@ -44,10 +45,12 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -85,7 +88,7 @@ SpriteRenderer:
   m_SpriteSortPoint: 0
 --- !u!95 &4957195200250220185
 Animator:
-  serializedVersion: 3
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -98,11 +101,13 @@ Animator:
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &1231662855600029284
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-7494877116273844692
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -111,11 +116,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7665670122406291894}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60401aa00f3435d4c942a2eb259195c2, type: 3}
+  m_Script: {fileID: 11500000, guid: 38b7ca721e254977b21155ebcf650ba7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eliminationOption: 0
-  waitTime: 0
-  isParentedToTreadmill: 0
-  isUsingWaitTimeInsteadOfClipTime: 0
-  startDelayTime: 0
+  _animator: {fileID: 4957195200250220185}
+  _explosionStateName: Explosion_01
+  _durationSeconds: 0.6

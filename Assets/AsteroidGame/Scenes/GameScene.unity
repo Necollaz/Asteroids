@@ -1634,6 +1634,10 @@ MonoBehaviour:
     type: 3}
   _asteroidExplosionPrefab: {fileID: 1222438759102082885, guid: 9b27e5732b225a44685c56826e0ffb4a,
     type: 3}
+  _ufoPrefab: {fileID: 2214372480414878988, guid: 1f15747e61e318845bbc3d2e0fee540e,
+    type: 3}
+  _ufoExplosionPrefab: {fileID: -7494877116273844692, guid: 4bc1f2139c0408240ae21b631a3b4831,
+    type: 3}
 --- !u!1 &2101661931
 GameObject:
   m_ObjectHideFlags: 0
@@ -1950,6 +1954,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5185768348774577773, guid: 6a5809abce7eb314892b036ec7b11e16,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8028490247053440893, guid: 6a5809abce7eb314892b036ec7b11e16,
         type: 3}
