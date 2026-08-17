@@ -22,6 +22,7 @@ namespace AsteroidGame.Scripts.Installers.Presentation
             Container.BindInterfacesAndSelfTo<DefeatGamePresenter>().AsSingle();
 
             Container.Bind<PlayerStatsHudView>().FromComponentInHierarchy().AsSingle();
+            Container.Bind<PlayerStatsHudTextCache>().AsSingle();
             Container.Bind<PlayerStatsHudViewModelFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<PlayerStatsHudPresenter>().AsSingle();
         }

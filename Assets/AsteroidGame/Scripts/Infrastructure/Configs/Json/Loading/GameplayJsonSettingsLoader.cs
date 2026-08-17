@@ -3,20 +3,21 @@ using UnityEngine;
 using AsteroidGame.Scripts.Infrastructure.Configs.Json.Data.Enemy;
 using AsteroidGame.Scripts.Infrastructure.Configs.Json.Data.Player;
 using AsteroidGame.Scripts.Infrastructure.Configs.Json.Data.World;
+using AsteroidGame.Scripts.Infrastructure.Configs.Json.Factories;
 using AsteroidGame.Scripts.Infrastructure.Configs.Json.Validation;
 
 namespace AsteroidGame.Scripts.Infrastructure.Configs.Json.Loading
 {
     public sealed class GameplayJsonSettingsLoader
     {
-        private readonly KeyCodeParser _keyCodeParser;
+        private readonly GameplayJsonSettingsFactory _settingsFactory;
         private readonly GameplayJsonSettingsValidator _validator;
-        
+
         public GameplayJsonSettingsLoader(
-            KeyCodeParser keyCodeParser,
+            GameplayJsonSettingsFactory settingsFactory, 
             GameplayJsonSettingsValidator validator)
         {
-            _keyCodeParser = keyCodeParser;
+            _settingsFactory = settingsFactory;
             _validator = validator;
         }
 
@@ -30,7 +31,7 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs.Json.Loading
                 config.EnemiesSettingsJson,
                 "enemies settings");
             WorldSettingsJson world = LoadJson<WorldSettingsJson>(config.WorldSettingsJson, "world settings");
-            GameplayJsonSettings settings = new GameplayJsonSettings(player, enemies, world, _keyCodeParser);
+            GameplayJsonSettings settings = _settingsFactory.Create(player, enemies, world);
             _validator.Validate(settings);
 
             return settings;

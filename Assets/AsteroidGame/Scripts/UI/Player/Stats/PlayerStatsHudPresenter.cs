@@ -8,7 +8,7 @@ namespace AsteroidGame.Scripts.UI.Player.Stats
 {
     public sealed class PlayerStatsHudPresenter : IInitializable, ITickable
     {
-        private const float UpdateIntervalSeconds = 0.1f;
+        private const float UpdateIntervalSeconds = 0.25f;
 
         private readonly PlayerStatsHudView _view;
         private readonly PlayerStatsHudViewModelFactory _viewModelFactory;

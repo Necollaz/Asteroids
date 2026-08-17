@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AsteroidGame.Scripts.Presentation.Asteroids.Effects
 {
     [DisallowMultipleComponent]
-    public class AsteroidExplosionView : MonoBehaviour
+    public sealed class AsteroidExplosionView : MonoBehaviour
     {
         private const float DefaultDurationSeconds = 1.5f;
         

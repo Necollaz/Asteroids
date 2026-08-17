@@ -4,7 +4,7 @@ using AsteroidGame.Scripts.Gameplay.Bullets.Contracts;
 namespace AsteroidGame.Scripts.Presentation.Bullets
 {
     [DisallowMultipleComponent]
-    public class BulletView : MonoBehaviour, IBulletView
+    public sealed class BulletView : MonoBehaviour, IBulletView
     {
         [SerializeField] private Transform _rotatingRoot;
 

@@ -5,7 +5,7 @@ using AsteroidGame.Scripts.Gameplay.Ufo.Contracts;
 namespace AsteroidGame.Scripts.Presentation.Ufo
 {
     [DisallowMultipleComponent]
-    public class UfoView : MonoBehaviour, IUfoView
+    public sealed class UfoView : MonoBehaviour, IUfoView
     {
         [SerializeField] private Transform _rotatingRoot;
 

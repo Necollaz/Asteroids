@@ -14,6 +14,12 @@ namespace AsteroidGame.Scripts.UI.Player.Stats
         [SerializeField] private TextMeshProUGUI _laserChargesText;
         [SerializeField] private TextMeshProUGUI _laserCooldownText;
 
+        private string _currentPositionText = string.Empty;
+        private string _currentRotationText = string.Empty;
+        private string _currentSpeedText = string.Empty;
+        private string _currentLaserChargesText = string.Empty;
+        private string _currentLaserCooldownText = string.Empty;
+        
         private void Awake() => ValidateRequiredReferences();
 
         private void OnValidate()
@@ -40,16 +46,27 @@ namespace AsteroidGame.Scripts.UI.Player.Stats
         public void Render(PlayerStatsHudViewModel viewModel)
         {
             ValidateRequiredReferences();
-            _root.gameObject.SetActive(viewModel.IsVisible);
+
+            if (_root.gameObject.activeSelf != viewModel.IsVisible)
+                _root.gameObject.SetActive(viewModel.IsVisible);
 
             if (!viewModel.IsVisible)
                 return;
 
-            _positionText.text = viewModel.PositionText;
-            _rotationText.text = viewModel.RotationText;
-            _speedText.text = viewModel.SpeedText;
-            _laserChargesText.text = viewModel.LaserChargesText;
-            _laserCooldownText.text = viewModel.LaserCooldownText;
+            SetText(_positionText, ref _currentPositionText, viewModel.PositionText);
+            SetText(_rotationText, ref _currentRotationText, viewModel.RotationText);
+            SetText(_speedText, ref _currentSpeedText, viewModel.SpeedText);
+            SetText(_laserChargesText, ref _currentLaserChargesText, viewModel.LaserChargesText);
+            SetText(_laserCooldownText, ref _currentLaserCooldownText, viewModel.LaserCooldownText);
+        }
+
+        private static void SetText(TextMeshProUGUI text, ref string currentValue, string nextValue)
+        {
+            if (currentValue == nextValue)
+                return;
+
+            currentValue = nextValue;
+            text.text = nextValue;
         }
 
         private void ValidateRequiredReferences()
