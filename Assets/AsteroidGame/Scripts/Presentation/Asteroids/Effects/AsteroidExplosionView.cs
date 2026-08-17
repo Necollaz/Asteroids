@@ -1,4 +1,5 @@
 using System;
+using AsteroidGame.Scripts.Domain.Physics.Models;
 using UnityEngine;
 
 namespace AsteroidGame.Scripts.Presentation.Asteroids.Effects
@@ -6,8 +7,10 @@ namespace AsteroidGame.Scripts.Presentation.Asteroids.Effects
     [DisallowMultipleComponent]
     public class AsteroidExplosionView : MonoBehaviour
     {
+        private const float DefaultDurationSeconds = 1.5f;
+        
         [SerializeField] private ParticleSystem[] _particles;
-        [SerializeField] private float _durationSeconds = 1.5f;
+        [SerializeField] private float _durationSeconds = DefaultDurationSeconds;
         
         public float DurationSeconds => _durationSeconds;
 
@@ -23,14 +26,14 @@ namespace AsteroidGame.Scripts.Presentation.Asteroids.Effects
                 _particles = GetComponentsInChildren<ParticleSystem>(true);
 
             if (_durationSeconds <= 0f)
-                _durationSeconds = 1.5f;
+                _durationSeconds = DefaultDurationSeconds;
         }
 
-        public void Play(float x, float y)
+        public void Play(Vector2D position)
         {
             ValidateRequiredReferences();
-            
-            transform.position = new Vector3(x, y, transform.position.z);
+
+            transform.position = new Vector3(position.X, position.Y, transform.position.z);
             gameObject.SetActive(true);
 
             for (int i = 0; i < _particles.Length; i++)

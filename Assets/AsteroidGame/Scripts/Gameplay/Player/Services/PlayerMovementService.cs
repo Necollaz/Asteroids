@@ -1,7 +1,6 @@
 using Zenject;
 using AsteroidGame.Scripts.Domain.Physics.Models;
 using AsteroidGame.Scripts.Domain.Physics.Services;
-using AsteroidGame.Scripts.Domain.Player.Factories;
 using AsteroidGame.Scripts.Domain.Player.Models;
 using AsteroidGame.Scripts.Domain.Player.Settings;
 using AsteroidGame.Scripts.Gameplay.Game;
@@ -12,30 +11,28 @@ using AsteroidGame.Scripts.Input;
 
 namespace AsteroidGame.Scripts.Gameplay.Player.Services
 {
-    public sealed class PlayerMovementService : IFixedTickable, IPlayerStateProvider, IPlayerBodyProvider
+    public sealed class PlayerMovementService : IFixedTickable
     {
-        private readonly PlayerModel _playerModel;
-        private readonly PlayerMovementSettings _settings;
-        private readonly PlayerAccelerationCalculator _accelerationCalculator;
-        private readonly PlayerSnapshotFactory _snapshotFactory;
-        private readonly CustomPhysicsWorld _physicsWorld;
+        private readonly IPlayerBodyProvider _playerBodyProvider;
         private readonly IPlayerInput _playerInput;
         private readonly ITimeProvider _timeProvider;
         private readonly IGameplayPauseState _pauseState;
         private readonly IPlayerControlState _controlState;
+        private readonly CustomPhysicsWorld _physicsWorld;
+        private readonly PlayerMovementSettings _settings;
+        private readonly PlayerAccelerationCalculator _accelerationCalculator;
 
         public PlayerMovementService(
-            PlayerModel playerModel,
+            IPlayerBodyProvider playerBodyProvider,
             IPlayerInput playerInput,
             ITimeProvider timeProvider,
             IGameplayPauseState pauseState,
             IPlayerControlState controlState,
             CustomPhysicsWorld physicsWorld,
             PlayerMovementSettings settings,
-            PlayerAccelerationCalculator accelerationCalculator,
-            PlayerSnapshotFactory snapshotFactory)
+            PlayerAccelerationCalculator accelerationCalculator)
         {
-            _playerModel = playerModel;
+            _playerBodyProvider = playerBodyProvider;
             _playerInput = playerInput;
             _timeProvider = timeProvider;
             _pauseState = pauseState;
@@ -43,11 +40,7 @@ namespace AsteroidGame.Scripts.Gameplay.Player.Services
             _physicsWorld = physicsWorld;
             _settings = settings;
             _accelerationCalculator = accelerationCalculator;
-            _snapshotFactory = snapshotFactory;
         }
-        
-        public Body2D Body => _playerModel.Body;
-        public PlayerSnapshot Snapshot => _snapshotFactory.Create(_playerModel);
 
         void IFixedTickable.FixedTick()
         {
@@ -59,35 +52,35 @@ namespace AsteroidGame.Scripts.Gameplay.Player.Services
             if (!_controlState.CanControl)
             {
                 MoveWithoutControl(deltaTime);
+                
                 return;
             }
 
             PlayerInputState inputState = _playerInput.GetState();
-
             Rotate(inputState, deltaTime);
             Move(inputState, deltaTime);
         }
 
         private void Rotate(PlayerInputState inputState, float deltaTime)
         {
+            Body2D body = _playerBodyProvider.Body;
             float rotationDelta = inputState.TurnDirection * _settings.TurnSpeedDegreesPerSecond * deltaTime;
-            _playerModel.Body.SetRotation(_playerModel.Body.RotationDegrees + rotationDelta);
+            body.SetRotation(body.RotationDegrees + rotationDelta);
         }
 
         private void Move(PlayerInputState inputState, float deltaTime)
         {
-            Acceleration acceleration = _accelerationCalculator.Calculate(
-                inputState,
-                _settings,
-                _playerModel.Body.RotationDegrees);
-
-            StepBody(acceleration, deltaTime);
+            Body2D body = _playerBodyProvider.Body;
+            Acceleration acceleration = _accelerationCalculator.Calculate(inputState, _settings, body.RotationDegrees);
+            StepBody(body, acceleration, deltaTime);
         }
 
-        private void MoveWithoutControl(float deltaTime) => StepBody(_settings.NoAcceleration, deltaTime);
+        private void MoveWithoutControl(float deltaTime) => 
+            StepBody(_playerBodyProvider.Body, _settings.NoAcceleration, deltaTime);
 
-        private void StepBody(Acceleration acceleration, float deltaTime) => _physicsWorld.Step(
-            _playerModel.Body,
+        private void StepBody(Body2D body, Acceleration acceleration, float deltaTime) =>
+            _physicsWorld.Step(
+            body,
             acceleration,
             deltaTime,
             _settings.MaxSpeed,

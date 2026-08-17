@@ -1,0 +1,16 @@
+{
+  "World": {
+    "Width": 18.0,
+    "Height": 10.0
+  },
+  "Spawning": {
+    "AsteroidPoolSize": 32,
+    "MaxActiveAsteroids": 12,
+    "AsteroidSpawnIntervalSeconds": 2.0,
+    "AsteroidSpawnMargin": 1.0,
+    "UfoPoolSize": 4,
+    "MaxActiveUfo": 1,
+    "UfoSpawnIntervalSeconds": 8.0,
+    "UfoSpawnMargin": 1.5
+  }
+}

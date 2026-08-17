@@ -5,9 +5,9 @@ using AsteroidGame.Scripts.Domain.Collision.Bodies;
 using AsteroidGame.Scripts.Domain.Enemies.Types;
 using AsteroidGame.Scripts.Domain.Physics.Factories;
 using AsteroidGame.Scripts.Domain.Physics.Models;
+using AsteroidGame.Scripts.Domain.Random;
 using AsteroidGame.Scripts.Gameplay.Asteroids.Models;
 using AsteroidGame.Scripts.Gameplay.Asteroids.Pooling;
-using AsteroidGame.Scripts.Gameplay.Random;
 using AsteroidGame.Scripts.Signals.Enemies;
 
 namespace AsteroidGame.Scripts.Gameplay.Asteroids.Services
@@ -85,7 +85,6 @@ namespace AsteroidGame.Scripts.Gameplay.Asteroids.Services
                 Vector2D direction = CreateRandomDirection();
                 float speed = _settings.GetSpeed(fragmentType);
                 Velocity velocity = _physicsValueFactory.CreateVelocity(direction.Multiply(speed));
-
                 _pool.TrySpawn(fragmentType, position, velocity, 0f);
             }
         }

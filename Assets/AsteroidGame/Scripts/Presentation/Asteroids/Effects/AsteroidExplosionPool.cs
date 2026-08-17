@@ -1,97 +1,41 @@
-using System;
-using System.Collections.Generic;
-using Zenject;
-using AsteroidGame.Scripts.Domain.Physics.Models;
 using AsteroidGame.Scripts.Gameplay.Game;
 using AsteroidGame.Scripts.Gameplay.Time;
+using AsteroidGame.Scripts.Presentation.Asteroids.Effects.Factories;
+using AsteroidGame.Scripts.Presentation.Common.Effects;
 
 namespace AsteroidGame.Scripts.Presentation.Asteroids.Effects
 {
-    public sealed class AsteroidExplosionPool : IInitializable, ITickable
+    public sealed class AsteroidExplosionPool : TimedEffectPool<AsteroidExplosionInstance>
     {
-        private const int PoolSize = 32;
+        private const int InitialPoolSize = 32;
+        private const string EmptyMessage = "Asteroid explosion pool has no effects.";
+        private const string AlreadyReleasedMessageText = "Asteroid explosion effect is already released.";
         
         private readonly AsteroidExplosionViewPrefabFactory _viewFactory;
         private readonly AsteroidExplosionInstanceFactory _instanceFactory;
-        private readonly ITimeProvider _timeProvider;
-        private readonly IGameplayPauseState _pauseState;
-        private readonly Queue<AsteroidExplosionInstance> _availableEffects = new();
-        private readonly List<AsteroidExplosionInstance> _activeEffects = new();
 
         public AsteroidExplosionPool(
             AsteroidExplosionViewPrefabFactory viewFactory,
             AsteroidExplosionInstanceFactory instanceFactory,
             ITimeProvider timeProvider,
             IGameplayPauseState pauseState)
+            : base(timeProvider, pauseState)
         {
             _viewFactory = viewFactory;
             _instanceFactory = instanceFactory;
-            _timeProvider = timeProvider;
-            _pauseState = pauseState;
         }
 
-        void IInitializable.Initialize()
-        {
-            for (int i = 0; i < PoolSize; i++)
-                _availableEffects.Enqueue(CreateInstance());
-        }
+        protected override int PoolSize => InitialPoolSize;
 
-        void ITickable.Tick()
-        {
-            if (_pauseState.IsPaused)
-                return;
-            
-            float deltaTime = _timeProvider.DeltaTime;
+        protected override string EmptyPoolMessage => EmptyMessage;
 
-            for (int i = _activeEffects.Count - 1; i >= 0; i--)
-            {
-                AsteroidExplosionInstance effect = _activeEffects[i];
-                
-                if (!effect.Tick(deltaTime))
-                    continue;
+        protected override string AlreadyReleasedMessage => AlreadyReleasedMessageText;
 
-                Release(effect);
-            }
-        }
-
-        public void Play(Vector2D position)
-        {
-            AsteroidExplosionInstance effect = GetAvailableEffect();
-            _activeEffects.Add(effect);
-            effect.Play(position);
-        }
-
-        private AsteroidExplosionInstance CreateInstance()
+        protected override AsteroidExplosionInstance CreateInstance()
         {
             AsteroidExplosionView view = _viewFactory.Create();
-            AsteroidExplosionInstance instance = _instanceFactory.Create(view);
-            instance.Hide();
 
-            return instance;
-        }
-        
-        private AsteroidExplosionInstance GetAvailableEffect()
-        {
-            if (_availableEffects.Count > 0)
-                return _availableEffects.Dequeue();
-
-            if (_activeEffects.Count == 0)
-                throw new InvalidOperationException("Asteroid explosion pool has no effects.");
-
-            AsteroidExplosionInstance oldestEffect = _activeEffects[0];
-            _activeEffects.RemoveAt(0);
-            oldestEffect.Hide();
-
-            return oldestEffect;
-        }
-
-        private void Release(AsteroidExplosionInstance effect)
-        {
-            if (!_activeEffects.Remove(effect))
-                throw new InvalidOperationException("Asteroid explosion effect is already released.");
-
-            effect.Hide();
-            _availableEffects.Enqueue(effect);
+            return _instanceFactory.Create(view);
         }
     }
 }

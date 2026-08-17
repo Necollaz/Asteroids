@@ -41,20 +41,20 @@ namespace AsteroidGame.Scripts.Presentation.Laser
             if (length <= float.Epsilon)
                 throw new InvalidOperationException("Laser visual length is too small.");
 
-            float beamSpriteLength = GetBeamSpriteLength();
+            Vector2 spriteSize = GetBeamSpriteSize();
             Vector3 normalizedDirection = direction / length;
 
             _root.gameObject.SetActive(true);
-
             _root.position = start;
             _root.rotation = Quaternion.FromToRotation(Vector3.right, normalizedDirection);
 
+            _beamRenderer.drawMode = SpriteDrawMode.Simple;
             _beamRoot.localPosition = new Vector3(0f, 0f, _beamRoot.localPosition.z);
             _beamRoot.localRotation = Quaternion.identity;
-            _beamRoot.localScale = new Vector3(length / beamSpriteLength, visualWidth, _beamRoot.localScale.z);
-            
-            _beamRenderer.drawMode = SpriteDrawMode.Sliced;
-            _beamRenderer.size = new Vector2(length, visualWidth);
+            _beamRoot.localScale = new Vector3(
+                length / spriteSize.x,
+                visualWidth / spriteSize.y, 
+                _beamRoot.localScale.z);
         }
 
         public void Hide()
@@ -62,16 +62,18 @@ namespace AsteroidGame.Scripts.Presentation.Laser
             ValidateRequiredReferences();
             _root.gameObject.SetActive(false);
         }
-
-        private float GetBeamSpriteLength()
+        
+        private Vector2 GetBeamSpriteSize()
         {
-            if (_beamRenderer.size.x > 0f)
-                return _beamRenderer.size.x;
+            if (_beamRenderer.sprite == null)
+                throw new InvalidOperationException($"{nameof(PlayerLaserView)} requires beam sprite.");
 
-            if (_beamRenderer.sprite != null && _beamRenderer.sprite.bounds.size.x > 0f)
-                return _beamRenderer.sprite.bounds.size.x;
+            Vector2 size = _beamRenderer.sprite.bounds.size;
 
-            throw new InvalidOperationException($"{nameof(PlayerLaserView)} cannot calculate beam sprite length.");
+            if (size.x <= 0f || size.y <= 0f)
+                throw new InvalidOperationException($"{nameof(PlayerLaserView)} cannot calculate beam sprite size.");
+
+            return size;
         }
 
         private void ValidateRequiredReferences()

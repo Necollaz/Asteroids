@@ -1,0 +1,26 @@
+{
+  "Asteroids": {
+    "SpeedReturnRate": 4.0,
+    "LargeRadius": 0.9,
+    "MediumRadius": 0.55,
+    "SmallRadius": 0.3,
+    "LargeSpeed": 0.5,
+    "MediumSpeed": 0.8,
+    "SmallSpeed": 1.1,
+    "MediumFragmentsPerLarge": 2,
+    "SmallFragmentsPerMedium": 2
+  },
+  "Ufo": {
+    "Speed": 1.4,
+    "CollisionRadius": 0.45,
+    "MaxTiltDegrees": 15.0,
+    "KnockbackSeconds": 0.6,
+    "KnockbackDamping": 4.0
+  },
+  "Rewards": {
+    "LargeAsteroid": 20,
+    "MediumAsteroid": 50,
+    "SmallAsteroid": 100,
+    "Ufo": 200
+  }
+}

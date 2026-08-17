@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Zenject;
 using AsteroidGame.Scripts.Domain.Collision.Bodies;
 using AsteroidGame.Scripts.Domain.Collision.Detection;
-using AsteroidGame.Scripts.Domain.Collision.Rules;
+using AsteroidGame.Scripts.Gameplay.Enemies.Facades;
 using AsteroidGame.Scripts.Gameplay.Game;
 using AsteroidGame.Scripts.Gameplay.Laser.Calculations;
 using AsteroidGame.Scripts.Gameplay.Laser.Models;
@@ -16,28 +16,26 @@ namespace AsteroidGame.Scripts.Gameplay.Laser.Services
         private const int MaxHitPassesPerTick = 8;
         
         private readonly PlayerLaserState _laserState;
-        private readonly IGameplayPauseState _gameplayPauseState;
         private readonly PlayerLaserHitArea _hitArea;
-        private readonly CollisionBodyRegistry _collisionBodyRegistry;
-        private readonly CollisionCategoryPolicy _collisionCategoryPolicy;
+        private readonly EnemyFacade _enemyFacade;
         private readonly LineCircleIntersectionDetector _lineCircleDetector;
         private readonly SignalBus _signalBus;
+        private readonly IGameplayPauseState _gameplayPauseState;
+        private readonly List<CollisionBody> _enemyBodyBuffer = new();
         private readonly List<CollisionBody> _hitBuffer = new();
 
         public PlayerLaserDamageService(
             PlayerLaserState laserState,
             IGameplayPauseState gameplayPauseState,
             PlayerLaserHitArea hitArea,
-            CollisionBodyRegistry collisionBodyRegistry,
-            CollisionCategoryPolicy collisionCategoryPolicy,
+            EnemyFacade enemyFacade,
             LineCircleIntersectionDetector lineCircleDetector,
             SignalBus signalBus)
         {
             _laserState = laserState;
             _gameplayPauseState = gameplayPauseState;
             _hitArea = hitArea;
-            _collisionBodyRegistry = collisionBodyRegistry;
-            _collisionCategoryPolicy = collisionCategoryPolicy;
+            _enemyFacade = enemyFacade;
             _lineCircleDetector = lineCircleDetector;
             _signalBus = signalBus;
         }
@@ -72,18 +70,15 @@ namespace AsteroidGame.Scripts.Gameplay.Laser.Services
         private void CollectHits(PlayerLaserBeamSegment segment)
         {
             _hitBuffer.Clear();
-
-            IReadOnlyList<CollisionBody> bodies = _collisionBodyRegistry.Bodies;
+            _enemyFacade.CollectActiveEnemyBodies(_enemyBodyBuffer);
+            
             float halfWidth = _hitArea.HalfWidth;
 
-            for (int i = 0; i < bodies.Count; i++)
+            for (int i = 0; i < _enemyBodyBuffer.Count; i++)
             {
-                CollisionBody body = bodies[i];
+                CollisionBody body = _enemyBodyBuffer[i];
 
                 if (!body.IsActive)
-                    continue;
-
-                if (!_collisionCategoryPolicy.IsEnemy(body.Category))
                     continue;
 
                 float hitRadius = body.Radius + halfWidth;

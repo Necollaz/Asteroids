@@ -1,12 +1,15 @@
+using System;
 using AsteroidGame.Scripts.Domain.Physics.Models;
+using AsteroidGame.Scripts.Presentation.Common.Effects;
 
 namespace AsteroidGame.Scripts.Presentation.Ufo.Effects
 {
-    public sealed class UfoExplosionInstance
+    public sealed class UfoExplosionInstance : IPooledTimedEffect
     {
         private float _remainingSeconds;
         
-        public UfoExplosionInstance(UfoExplosionView view) => View = view;
+        public UfoExplosionInstance(UfoExplosionView view) =>
+            View = view ?? throw new ArgumentNullException(nameof(view));
         
         public UfoExplosionView View { get; }
 

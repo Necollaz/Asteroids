@@ -1,15 +1,22 @@
 using AsteroidGame.Scripts.Domain.Collision.Bodies;
 using AsteroidGame.Scripts.Domain.Collision.Detection;
 using AsteroidGame.Scripts.Domain.Collision.Rules;
+using AsteroidGame.Scripts.Gameplay.Enemies.Facades;
 
 namespace AsteroidGame.Scripts.Gameplay.Collision
 {
     public sealed class PlayerEnemyCollisionContactResolver
     {
         private readonly CollisionCategoryPolicy _categoryPolicy;
+        private readonly EnemyFacade _enemyFacade;
 
-        public PlayerEnemyCollisionContactResolver(CollisionCategoryPolicy categoryPolicy) => 
+        public PlayerEnemyCollisionContactResolver(
+            CollisionCategoryPolicy categoryPolicy, 
+            EnemyFacade enemyFacade)
+        {
             _categoryPolicy = categoryPolicy;
+            _enemyFacade = enemyFacade;
+        }
 
         public bool TryResolve(CollisionContact contact, out PlayerEnemyCollisionContact playerEnemyContact)
         {
@@ -39,10 +46,10 @@ namespace AsteroidGame.Scripts.Gameplay.Collision
 
         private CollisionBody GetEnemyBody(CollisionContact contact)
         {
-            if (_categoryPolicy.IsEnemy(contact.First.Category))
+            if (_enemyFacade.ContainsActiveEnemyBody(contact.First))
                 return contact.First;
 
-            if (_categoryPolicy.IsEnemy(contact.Second.Category))
+            if (_enemyFacade.ContainsActiveEnemyBody(contact.Second))
                 return contact.Second;
 
             return null;

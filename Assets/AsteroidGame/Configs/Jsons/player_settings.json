@@ -1,0 +1,51 @@
+{
+  "Input": {
+    "InputSourceType": "Auto",
+    "ShowMobileControlsInEditor": false,
+    "MobileTurnLeftValue": 1.0,
+    "MobileTurnRightValue": -1.0,
+    "TurnLeftKey": "A",
+    "TurnRightKey": "D",
+    "ThrustKey": "W",
+    "AlternativeTurnLeftKey": "LeftArrow",
+    "AlternativeTurnRightKey": "RightArrow",
+    "AlternativeThrustKey": "UpArrow",
+    "FireBulletKey": "Space",
+    "AlternativeFireBulletKey": "Mouse0",
+    "FireLaserKey": "E",
+    "AlternativeFireLaserKey": "Mouse1"
+  },
+  "Movement": {
+    "SpawnPositionX": 0.0,
+    "SpawnPositionY": 0.0,
+    "Acceleration": 18.0,
+    "TurnSpeed": 180.0,
+    "MaxSpeed": 12.0,
+    "LinearDamping": 0.15,
+    "SpawnRotationDegrees": 0.0
+  },
+  "Collision": {
+    "MaxHealth": 3,
+    "CollisionRadius": 0.45,
+    "CollisionBounceSpeed": 8.0,
+    "InvulnerabilitySeconds": 3.0
+  },
+  "Bullets": {
+    "PoolSize": 24,
+    "Speed": 24.0,
+    "LifetimeSeconds": 1.2,
+    "Radius": 0.2,
+    "ShotsPerSecond": 5.0,
+    "SpawnOffset": 0.7,
+    "VisibilityMargin": 0.25
+  },
+  "Laser": {
+    "MaxCharges": 3,
+    "InitialCharges": 3,
+    "RechargeSeconds": 4.0,
+    "VisibleSeconds": 1.0,
+    "Length": 2.5,
+    "HitHalfWidth": 0.15,
+    "VisualWidth": 0.25
+  }
+}

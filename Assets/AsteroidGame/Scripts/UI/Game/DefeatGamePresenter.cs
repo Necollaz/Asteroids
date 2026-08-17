@@ -18,7 +18,10 @@ namespace AsteroidGame.Scripts.UI.Game
         void IInitializable.Initialize()
         {
             _signalBus.Subscribe<GameDefeatStartedSignal>(ShowDefeat);
+            
             _view.RestartClicked += RequestRestart;
+            
+            _view.Render(new DefeatGameViewModel(false));
         }
 
         void IDisposable.Dispose()
@@ -27,7 +30,7 @@ namespace AsteroidGame.Scripts.UI.Game
             _view.RestartClicked -= RequestRestart;
         }
 
-        private void ShowDefeat() => _view.Show();
+        private void ShowDefeat() => _view.Render(new DefeatGameViewModel(true));
 
         private void RequestRestart() => _signalBus.Fire<GameRestartRequestedSignal>();
     }

@@ -1,4 +1,4 @@
-using AsteroidGame.Scripts.Gameplay.Random;
+using AsteroidGame.Scripts.Domain.Random;
 
 namespace AsteroidGame.Scripts.Infrastructure.Random
 {
@@ -6,7 +6,7 @@ namespace AsteroidGame.Scripts.Infrastructure.Random
     {
         public int Range(int minInclusive, int maxExclusive) => UnityEngine.Random.Range(minInclusive, maxExclusive);
 
-        public float Range(float minInclusive, float maxInclusive) => 
+        public float Range(float minInclusive, float maxInclusive) =>
             UnityEngine.Random.Range(minInclusive, maxInclusive);
     }
 }

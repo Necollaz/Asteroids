@@ -7,16 +7,15 @@ namespace AsteroidGame.Scripts.UI.Game
     [DisallowMultipleComponent]
     public sealed class DefeatGameView : MonoBehaviour
     {
+        public event Action RestartClicked;
+        
         [SerializeField] private Transform _root;
         [SerializeField] private Button _restartButton;
-
-        public event Action RestartClicked;
-
+        
         private void Awake()
         {
             ValidateRequiredReferences();
             _restartButton.onClick.AddListener(HandleRestartClicked);
-            Hide();
         }
 
         private void OnDestroy()
@@ -34,16 +33,10 @@ namespace AsteroidGame.Scripts.UI.Game
                 Debug.LogError($"{nameof(DefeatGameView)} on {name} requires restart button.", this);
         }
 
-        public void Show()
+        public void Render(DefeatGameViewModel viewModel)
         {
             ValidateRequiredReferences();
-            _root.gameObject.SetActive(true);
-        }
-
-        public void Hide()
-        {
-            ValidateRequiredReferences();
-            _root.gameObject.SetActive(false);
+            _root.gameObject.SetActive(viewModel.IsVisible);
         }
 
         private void HandleRestartClicked() => RestartClicked?.Invoke();

@@ -1,32 +1,34 @@
 using System;
 using AsteroidGame.Scripts.Domain.Physics.Models;
+using AsteroidGame.Scripts.Presentation.Common.Effects;
 
 namespace AsteroidGame.Scripts.Presentation.Asteroids.Effects
 {
-    public sealed class AsteroidExplosionInstance
+    public sealed class AsteroidExplosionInstance : IPooledTimedEffect
     {
+        private float _remainingSeconds;
+        
         public AsteroidExplosionInstance(AsteroidExplosionView  view) => 
             View = view ?? throw new ArgumentNullException(nameof(view));
         
         public AsteroidExplosionView View { get; }
-        public float RemainingSeconds { get; private set; }
 
         public bool Tick(float deltaTime)
         {
-            RemainingSeconds -= deltaTime;
-            
-            return RemainingSeconds <= 0f;
+            _remainingSeconds -= deltaTime;
+
+            return _remainingSeconds <= 0f;
         }
-        
+
         public void Play(Vector2D position)
         {
-            RemainingSeconds = View.DurationSeconds;
-            View.Play(position.X, position.Y);
+            _remainingSeconds = View.DurationSeconds;
+            View.Play(position);
         }
 
         public void Hide()
         {
-            RemainingSeconds = 0;
+            _remainingSeconds = 0f;
             View.Hide();
         }
     }

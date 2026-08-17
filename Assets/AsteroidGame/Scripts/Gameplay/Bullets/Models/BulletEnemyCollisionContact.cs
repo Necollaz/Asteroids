@@ -5,10 +5,10 @@ namespace AsteroidGame.Scripts.Gameplay.Bullets.Models
 {
     public readonly struct BulletEnemyCollisionContact
     {
-        public BulletEnemyCollisionContact(CollisionBody bulletBody, CollisionBody enemtBody)
+        public BulletEnemyCollisionContact(CollisionBody bulletBody, CollisionBody enemyBody)
         {
             BulletBody = bulletBody ?? throw new ArgumentNullException(nameof(bulletBody));
-            EnemyBody = enemtBody ?? throw new ArgumentNullException(nameof(enemtBody));
+            EnemyBody = enemyBody ?? throw new ArgumentNullException(nameof(enemyBody));
         }
         
         public CollisionBody BulletBody { get; }

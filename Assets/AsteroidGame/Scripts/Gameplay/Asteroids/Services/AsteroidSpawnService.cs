@@ -5,6 +5,7 @@ using AsteroidGame.Scripts.Domain.Physics.Factories;
 using AsteroidGame.Scripts.Domain.Physics.Models;
 using AsteroidGame.Scripts.Gameplay.Asteroids.Pooling;
 using AsteroidGame.Scripts.Gameplay.Asteroids.Spawning;
+using AsteroidGame.Scripts.Gameplay.Enemies.Spawning;
 using AsteroidGame.Scripts.Gameplay.Game;
 using AsteroidGame.Scripts.Gameplay.Time;
 

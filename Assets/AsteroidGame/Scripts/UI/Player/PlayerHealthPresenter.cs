@@ -10,6 +10,8 @@ namespace AsteroidGame.Scripts.UI.Player
     {
         private readonly PlayerHealthView _view;
         private readonly PlayerHealthState _health;
+        private readonly PlayerHealthHudSettings _settings;
+        private readonly PlayerHealthViewModelFactory _viewModelFactory;
         private readonly SignalBus _signalBus;
         private readonly ITimeProvider _timeProvider;
 
@@ -18,11 +20,15 @@ namespace AsteroidGame.Scripts.UI.Player
         public PlayerHealthPresenter(
             PlayerHealthView view,
             PlayerHealthState health,
+            PlayerHealthHudSettings settings,
+            PlayerHealthViewModelFactory viewModelFactory,
             ITimeProvider timeProvider,
             SignalBus signalBus)
         {
             _view = view;
             _health = health;
+            _settings = settings;
+            _viewModelFactory = viewModelFactory;
             _timeProvider = timeProvider;
             _signalBus = signalBus;
         }
@@ -31,9 +37,8 @@ namespace AsteroidGame.Scripts.UI.Player
         {
             _signalBus.Subscribe<PlayerDamagedSignal>(HandlePlayerDamaged);
 
-            _view.SetHealth(_health.CurrentHealth, _health.MaxHealth);
-            _view.Show();
-            _remainingVisibleSeconds = _view.InitialVisibleSeconds;
+            _remainingVisibleSeconds = _settings.InitialVisibleSeconds;
+            RenderHealth(true);
         }
 
         void IDisposable.Dispose() => _signalBus.Unsubscribe<PlayerDamagedSignal>(HandlePlayerDamaged);
@@ -46,14 +51,26 @@ namespace AsteroidGame.Scripts.UI.Player
             _remainingVisibleSeconds -= _timeProvider.DeltaTime;
 
             if (_remainingVisibleSeconds <= 0f)
-                _view.Hide();
+                RenderHealth(false);
         }
 
         private void HandlePlayerDamaged(PlayerDamagedSignal signal)
         {
-            _view.SetHealth(signal.CurrentHealth, signal.MaxHealth);
-            _view.Show();
-            _remainingVisibleSeconds = _view.DamageVisibleSeconds;
+            _remainingVisibleSeconds = _settings.DamageVisibleSeconds;
+            PlayerHealthViewModel viewModel = _viewModelFactory.Create(
+                signal.CurrentHealth,
+                signal.MaxHealth,
+                true);
+            _view.Render(viewModel);
+        }
+
+        private void RenderHealth(bool isVisible)
+        {
+            PlayerHealthViewModel viewModel = _viewModelFactory.Create(
+                _health.CurrentHealth, 
+                _health.MaxHealth,
+                isVisible);
+            _view.Render(viewModel);
         }
     }
 }
