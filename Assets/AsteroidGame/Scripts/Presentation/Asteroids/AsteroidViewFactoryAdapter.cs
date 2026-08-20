@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using Zenject;
-using AsteroidGame.Scripts.Domain.Asteroids.Contracts;
 using AsteroidGame.Scripts.Domain.Enemies.Types;
 using AsteroidGame.Scripts.Gameplay.Asteroids.Contracts;
 

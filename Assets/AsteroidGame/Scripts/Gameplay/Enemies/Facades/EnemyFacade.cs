@@ -74,7 +74,7 @@ namespace AsteroidGame.Scripts.Gameplay.Enemies.Facades
 
         private bool TryGetUfoType(CollisionBody body, out EnemyType enemyType)
         {
-            IReadOnlyList<UfoInstance> ufos = _ufoPool.ActiveUfo;
+            IReadOnlyList<UfoInstance> ufos = _ufoPool.ActiveUfos;
 
             for (int i = 0; i < ufos.Count; i++)
             {
@@ -108,7 +108,7 @@ namespace AsteroidGame.Scripts.Gameplay.Enemies.Facades
 
         private void AddActiveUfoBodies(List<CollisionBody> buffer)
         {
-            IReadOnlyList<UfoInstance> ufos = _ufoPool.ActiveUfo;
+            IReadOnlyList<UfoInstance> ufos = _ufoPool.ActiveUfos;
 
             for (int i = 0; i < ufos.Count; i++)
             {

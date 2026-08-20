@@ -29,7 +29,6 @@ namespace AsteroidGame.Scripts.Infrastructure.Ads.Services
                 return;
 
             UniTaskCompletionSource completionSource = new UniTaskCompletionSource();
-
             MobileAds.Initialize(_ => completionSource.TrySetResult());
 
             await completionSource.Task.AttachExternalCancellation(cancellationToken);
@@ -73,12 +72,20 @@ namespace AsteroidGame.Scripts.Infrastructure.Ads.Services
             _interstitialAd.OnAdFullScreenContentClosed += HandleClosed;
             _interstitialAd.OnAdFullScreenContentFailed += HandleFailed;
 
-            _interstitialAd.Show();
+            try
+            {
+                _interstitialAd.Show();
 
-            await completionSource.Task.AttachExternalCancellation(cancellationToken);
-
-            _interstitialAd.OnAdFullScreenContentClosed -= HandleClosed;
-            _interstitialAd.OnAdFullScreenContentFailed -= HandleFailed;
+                await completionSource.Task.AttachExternalCancellation(cancellationToken);
+            }
+            finally
+            {
+                if (_interstitialAd != null)
+                {
+                    _interstitialAd.OnAdFullScreenContentClosed -= HandleClosed;
+                    _interstitialAd.OnAdFullScreenContentFailed -= HandleFailed;
+                }
+            }
 
             DestroyInterstitial();
             await LoadInterstitialAsync(cancellationToken);
@@ -118,12 +125,22 @@ namespace AsteroidGame.Scripts.Infrastructure.Ads.Services
             _rewardedAd.OnAdFullScreenContentClosed += HandleClosed;
             _rewardedAd.OnAdFullScreenContentFailed += HandleFailed;
 
-            _rewardedAd.Show(_ => rewardEarned = true);
+            bool result;
 
-            bool result = await completionSource.Task.AttachExternalCancellation(cancellationToken);
+            try
+            {
+                _rewardedAd.Show(_ => rewardEarned = true);
 
-            _rewardedAd.OnAdFullScreenContentClosed -= HandleClosed;
-            _rewardedAd.OnAdFullScreenContentFailed -= HandleFailed;
+                result = await completionSource.Task.AttachExternalCancellation(cancellationToken);
+            }
+            finally
+            {
+                if (_rewardedAd != null)
+                {
+                    _rewardedAd.OnAdFullScreenContentClosed -= HandleClosed;
+                    _rewardedAd.OnAdFullScreenContentFailed -= HandleFailed;
+                }
+            }
 
             DestroyRewarded();
 

@@ -11,10 +11,6 @@ namespace AsteroidGame.Scripts.Domain.Asteroids.Settings
         public AsteroidSettings(IAsteroidSettingsData settingsData) =>
             _settingsData = settingsData ?? throw new ArgumentNullException(nameof(settingsData));
         
-        public int PoolSize => _settingsData.AsteroidPoolSize;
-        public int MaxActiveAsteroids => _settingsData.MaxActiveAsteroids;
-        public float SpawnIntervalSeconds => _settingsData.AsteroidSpawnIntervalSeconds;
-        public float SpawnMargin => _settingsData.AsteroidSpawnMargin;
         public float SpeedReturnRate => _settingsData.AsteroidSpeedReturnRate;
 
         public float GetRadius(EnemyType type)

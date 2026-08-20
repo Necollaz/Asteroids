@@ -22,9 +22,6 @@ namespace AsteroidGame.Scripts.Domain.Player.Models
         public PlayerHealthState Health { get; }
         public PlayerInvulnerabilityState Invulnerability { get; }
         public PlayerLaserMagazine LaserMagazine { get; }
-
-        public bool IsDead => Health.IsDead;
         public bool CanControl => !Health.IsDead && !Invulnerability.IsActive;
-        public bool CanReceiveDamage => !Health.IsDead && !Invulnerability.IsActive;
     }
 }

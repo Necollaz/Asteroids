@@ -9,18 +9,6 @@ namespace AsteroidGame.Scripts.Domain.Ufo.Settings
         {
             if (settingsData == null)
                 throw new ArgumentNullException(nameof(settingsData));
-            
-            if (settingsData.UfoPoolSize <= 0)
-                throw new ArgumentOutOfRangeException(nameof(settingsData.UfoPoolSize));
-
-            if (settingsData.MaxActiveUfo <= 0)
-                throw new ArgumentOutOfRangeException(nameof(settingsData.MaxActiveUfo));
-
-            if (settingsData.UfoSpawnIntervalSeconds <= 0f)
-                throw new ArgumentOutOfRangeException(nameof(settingsData.UfoSpawnIntervalSeconds));
-
-            if (settingsData.UfoSpawnMargin < 0f)
-                throw new ArgumentOutOfRangeException(nameof(settingsData.UfoSpawnMargin));
 
             if (settingsData.UfoSpeed <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(settingsData.UfoSpeed));
@@ -37,10 +25,6 @@ namespace AsteroidGame.Scripts.Domain.Ufo.Settings
             if (settingsData.UfoKnockbackDamping < 0f)
                 throw new ArgumentOutOfRangeException(nameof(settingsData.UfoKnockbackDamping));
             
-            PoolSize = settingsData.UfoPoolSize;
-            MaxActiveUfo = settingsData.MaxActiveUfo;
-            SpawnIntervalSeconds = settingsData.UfoSpawnIntervalSeconds;
-            SpawnMargin = settingsData.UfoSpawnMargin;
             Speed = settingsData.UfoSpeed;
             CollisionRadius = settingsData.UfoCollisionRadius;
             MaxTiltDegrees = settingsData.UfoMaxTiltDegrees;
@@ -48,10 +32,6 @@ namespace AsteroidGame.Scripts.Domain.Ufo.Settings
             KnockbackDamping = settingsData.UfoKnockbackDamping;
         }
         
-        public int PoolSize { get; }
-        public int MaxActiveUfo { get; }
-        public float SpawnIntervalSeconds { get; }
-        public float SpawnMargin { get; }
         public float Speed { get; }
         public float CollisionRadius { get; }
         public float MaxTiltDegrees { get; }

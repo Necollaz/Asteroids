@@ -19,18 +19,6 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs.Validation
             if (settings == null)
                 throw new ArgumentNullException(nameof(settings));
 
-            if (settings.AsteroidPoolSize <= 0)
-                throw new InvalidOperationException("Asteroid pool size must be greater than zero.");
-
-            if (settings.MaxActiveAsteroids <= 0)
-                throw new InvalidOperationException("Max active asteroids must be greater than zero.");
-
-            if (settings.AsteroidSpawnIntervalSeconds <= 0f)
-                throw new InvalidOperationException("Asteroid spawn interval seconds must be greater than zero.");
-
-            if (settings.AsteroidSpawnMargin < 0f)
-                throw new InvalidOperationException("Asteroid spawn margin cannot be negative.");
-
             if (settings.LargeAsteroidRadius <= 0f ||
                 settings.MediumAsteroidRadius <= 0f ||
                 settings.SmallAsteroidRadius <= 0f)
@@ -59,18 +47,6 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs.Validation
         {
             if (settings == null)
                 throw new ArgumentNullException(nameof(settings));
-
-            if (settings.UfoPoolSize <= 0)
-                throw new InvalidOperationException("UFO pool size must be greater than zero.");
-
-            if (settings.MaxActiveUfo <= 0)
-                throw new InvalidOperationException("Max active UFO must be greater than zero.");
-
-            if (settings.UfoSpawnIntervalSeconds <= 0f)
-                throw new InvalidOperationException("UFO spawn interval seconds must be greater than zero.");
-
-            if (settings.UfoSpawnMargin < 0f)
-                throw new InvalidOperationException("UFO spawn margin cannot be negative.");
 
             if (settings.UfoSpeed <= 0f)
                 throw new InvalidOperationException("UFO speed must be greater than zero.");

@@ -5,6 +5,7 @@ using AsteroidGame.Scripts.Infrastructure.Ads.Contracts;
 using AsteroidGame.Scripts.Infrastructure.Ads.Presenters;
 using AsteroidGame.Scripts.Infrastructure.Ads.Services;
 using AsteroidGame.Scripts.Infrastructure.Ads.Settings;
+using AsteroidGame.Scripts.Infrastructure.Ads.States;
 using AsteroidGame.Scripts.Infrastructure.Analytics.Contracts;
 using AsteroidGame.Scripts.Infrastructure.Analytics.Presenters;
 using AsteroidGame.Scripts.Infrastructure.Analytics.Services;
@@ -40,7 +41,8 @@ namespace AsteroidGame.Scripts.Installers.Core
                 throw new InvalidOperationException("AdsSettingsConfig is not assigned in GameInstaller.");
 
             Container.Bind<IAdsSettingsData>().FromInstance(adsSettingsConfig).AsSingle();
-
+            Container.Bind<AdsInitializationState>().AsSingle();
+            
             if (adsSettingsConfig.ProviderType == AdsProviderType.AdMob)
                 Container.Bind<IAdsService>().To<AdMobAdsService>().AsSingle();
             else

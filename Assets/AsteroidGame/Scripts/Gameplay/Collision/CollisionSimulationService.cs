@@ -15,6 +15,7 @@ namespace AsteroidGame.Scripts.Gameplay.Collision
         private readonly CollisionContactRouter _contactRouter;
         private readonly IGameplayPauseState _pauseState;
 
+        private readonly List<CollisionBody> _activeBodies = new();
         private readonly List<CollisionContact> _contacts = new();
 
         public CollisionSimulationService(
@@ -36,22 +37,35 @@ namespace AsteroidGame.Scripts.Gameplay.Collision
             if (_pauseState.IsPaused)
                 return;
 
+            CollectActiveBodies();
             CollectContacts();
             HandleContacts();
         }
 
-        private void CollectContacts()
+        private void CollectActiveBodies()
         {
-            _contacts.Clear();
-
+            _activeBodies.Clear();
             IReadOnlyList<CollisionBody> bodies = _registry.Bodies;
 
             for (int i = 0; i < bodies.Count; i++)
             {
-                for (int j = i + 1; j < bodies.Count; j++)
+                CollisionBody body = bodies[i];
+                
+                if (body.IsActive)
+                    _activeBodies.Add(body);
+            }
+        }
+        
+        private void CollectContacts()
+        {
+            _contacts.Clear();
+
+            for (int i = 0; i < _activeBodies.Count; i++)
+            {
+                for (int j = i + 1; j < _activeBodies.Count; j++)
                 {
-                    CollisionBody first = bodies[i];
-                    CollisionBody second = bodies[j];
+                    CollisionBody first = _activeBodies[i];
+                    CollisionBody second = _activeBodies[j];
 
                     if (!_categoryPolicy.ShouldCheck(first.Category, second.Category))
                         continue;

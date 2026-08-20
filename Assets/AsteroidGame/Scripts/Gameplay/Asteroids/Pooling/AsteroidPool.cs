@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Zenject;
-using AsteroidGame.Scripts.Domain.Asteroids.Settings;
 using AsteroidGame.Scripts.Domain.Collision.Bodies;
+using AsteroidGame.Scripts.Domain.Enemies.Settings;
 using AsteroidGame.Scripts.Domain.Enemies.Types;
 using AsteroidGame.Scripts.Domain.Physics.Models;
 using AsteroidGame.Scripts.Gameplay.Asteroids.Factories;
@@ -12,7 +12,7 @@ namespace AsteroidGame.Scripts.Gameplay.Asteroids.Pooling
 {
     public sealed class AsteroidPool : IInitializable
     {
-        private readonly AsteroidSettings _settings;
+        private readonly EnemySpawnSettings _settings;
         private readonly AsteroidInstanceFactory _instanceFactory;
         private readonly CollisionBodyRegistry _collisionBodyRegistry;
         private readonly Dictionary<EnemyType, Queue<AsteroidInstance>> _availableAsteroids = new();
@@ -21,7 +21,7 @@ namespace AsteroidGame.Scripts.Gameplay.Asteroids.Pooling
         private int _createdCount;
 
         public AsteroidPool(
-            AsteroidSettings settings,
+            EnemySpawnSettings settings,
             AsteroidInstanceFactory instanceFactory,
             CollisionBodyRegistry collisionBodyRegistry)
         {
@@ -100,7 +100,7 @@ namespace AsteroidGame.Scripts.Gameplay.Asteroids.Pooling
             asteroid = null;
             Queue<AsteroidInstance> queue = _availableAsteroids[type];
 
-            if (queue.Count == 0 && _createdCount >= _settings.PoolSize)
+            if (queue.Count == 0 && _createdCount >= _settings.AsteroidPoolSize)
                 return false;
 
             asteroid = queue.Count > 0 ? queue.Dequeue() : CreateAsteroid(type);
@@ -119,7 +119,7 @@ namespace AsteroidGame.Scripts.Gameplay.Asteroids.Pooling
         
         private void WarmUp()
         {
-            int perTypeCount = Math.Max(1, _settings.PoolSize / 3);
+            int perTypeCount = Math.Max(1, _settings.AsteroidPoolSize / 3);
 
             WarmUpType(EnemyType.LargeAsteroid, perTypeCount);
             WarmUpType(EnemyType.MediumAsteroid, perTypeCount);

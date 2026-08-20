@@ -9,6 +9,8 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs.Json.Data.World
         public int MaxActiveAsteroids;
         public int UfoPoolSize;
         public int MaxActiveUfo;
+        public int AsteroidExplosionPoolSize;
+        public int UfoExplosionPoolSize;
         public float AsteroidSpawnIntervalSeconds;
         public float AsteroidSpawnMargin;
         public float UfoSpawnIntervalSeconds;

@@ -7,6 +7,7 @@ using AsteroidGame.Scripts.Domain.Player.States;
 using AsteroidGame.Scripts.Gameplay.Factories;
 using AsteroidGame.Scripts.Gameplay.Player.Calculations;
 using AsteroidGame.Scripts.Gameplay.Player.Facades;
+using AsteroidGame.Scripts.Gameplay.Player.Factories;
 using AsteroidGame.Scripts.Gameplay.Player.Services;
 using AsteroidGame.Scripts.Gameplay.Time;
 
@@ -28,30 +29,19 @@ namespace AsteroidGame.Scripts.Installers.Player
             Container.Bind<PlayerAccelerationCalculator>().AsSingle();
 
             Container.BindFactory<Body2D, PlayerModel, PlayerModelFactory>();
+            
+            Container.Bind<PlayerModelCreationFactory>().AsSingle();
+            Container.Bind<PlayerModel>()
+                .FromResolveGetter<PlayerModelCreationFactory>(factory => factory.Create())
+                .AsSingle();
 
-            Container.Bind<PlayerModel>().FromMethod(CreatePlayerModel).AsSingle();
-            
             Container.BindInterfacesAndSelfTo<PlayerFacade>().AsSingle();
-            
+
             Container.Bind<PlayerDamageService>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<PlayerMovementService>().AsSingle();
             Container.BindInterfacesAndSelfTo<PlayerCollisionBodyService>().AsSingle();
             Container.BindInterfacesAndSelfTo<PlayerInvulnerabilityTimerService>().AsSingle();
-        }
-
-        private PlayerModel CreatePlayerModel(InjectContext context)
-        {
-            DiContainer container = context.Container;
-            PlayerMovementSettings movementSettings = container.Resolve<PlayerMovementSettings>();
-            Body2DFactory bodyFactory = container.Resolve<Body2DFactory>();
-            PlayerModelFactory playerModelFactory = container.Resolve<PlayerModelFactory>();
-            Body2D body = bodyFactory.Create(
-                movementSettings.SpawnPosition,
-                movementSettings.InitialVelocity,
-                movementSettings.SpawnRotationDegrees);
-
-            return playerModelFactory.Create(body);
         }
     }
 }

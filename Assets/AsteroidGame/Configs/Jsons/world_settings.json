@@ -9,6 +9,8 @@
     "AsteroidSpawnIntervalSeconds": 2.0,
     "AsteroidSpawnMargin": 1.0,
     "UfoPoolSize": 4,
+    "AsteroidExplosionPoolSize": 32,
+    "UfoExplosionPoolSize": 10,
     "MaxActiveUfo": 1,
     "UfoSpawnIntervalSeconds": 8.0,
     "UfoSpawnMargin": 1.5

@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using Zenject;
 using AsteroidGame.Scripts.Domain.Asteroids.Settings;
 using AsteroidGame.Scripts.Domain.Collision.Bodies;
@@ -14,6 +15,9 @@ namespace AsteroidGame.Scripts.Gameplay.Asteroids.Services
 {
     public sealed class AsteroidDestructionService : IInitializable, IDisposable
     {
+        private const string FragmentSpawnFailedMessage =
+            "Asteroid fragment spawn skipped. Asteroid pool has no available instances.";
+        
         private readonly AsteroidPool _pool;
         private readonly AsteroidSettings _settings;
         private readonly PhysicsValueFactory _physicsValueFactory;
@@ -85,9 +89,12 @@ namespace AsteroidGame.Scripts.Gameplay.Asteroids.Services
                 Vector2D direction = CreateRandomDirection();
                 float speed = _settings.GetSpeed(fragmentType);
                 Velocity velocity = _physicsValueFactory.CreateVelocity(direction.Multiply(speed));
-                _pool.TrySpawn(fragmentType, position, velocity, 0f);
+            
+                if (_pool.TrySpawn(fragmentType, position, velocity, 0f))
+                    return;
+            
+                Debug.LogWarning(FragmentSpawnFailedMessage);
             }
         }
-
     }
 }

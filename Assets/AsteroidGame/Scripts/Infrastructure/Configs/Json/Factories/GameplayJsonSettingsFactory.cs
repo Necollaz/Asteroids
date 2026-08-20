@@ -19,12 +19,18 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs.Json.Factories
             EnemiesSettingsJson enemies,
             WorldSettingsJson world)
         {
-            JsonPlayerSettingsSection playerSection = new JsonPlayerSettingsSection(player, _keyCodeParser);
-            JsonWeaponSettingsSection weaponSection = new JsonWeaponSettingsSection(player);
-            JsonEnemySettingsSection enemySection = new JsonEnemySettingsSection(enemies, world);
-            JsonWorldSettingsSection worldSection = new JsonWorldSettingsSection(world);
+            JsonPlayerSettingsSection playerSection = new (player, _keyCodeParser);
+            JsonWeaponSettingsSection weaponSection = new (player);
+            JsonEnemySettingsSection enemySection = new (enemies);
+            JsonWorldSettingsSection worldSection = new (world);
+            JsonEnemySpawnSettingsSection spawnSection = new (world);
 
-            return new GameplayJsonSettings(playerSection, weaponSection, enemySection, worldSection);
+            return new GameplayJsonSettings(
+                playerSection,
+                weaponSection,
+                enemySection,
+                worldSection,
+                spawnSection);
         }
     }
 }

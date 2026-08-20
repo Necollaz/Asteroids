@@ -8,6 +8,7 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs.Validation
         private readonly PlayerSettingsValidator _playerValidator;
         private readonly WeaponSettingsValidator _weaponValidator;
         private readonly EnemySettingsValidator _enemyValidator;
+        private readonly SpawnSettingsValidator _spawnValidator;
         private readonly WorldSettingsValidator _worldValidator;
 
         public GameplaySettingsConfigValidator(
@@ -15,12 +16,14 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs.Validation
             PlayerSettingsValidator playerValidator,
             WeaponSettingsValidator weaponValidator,
             EnemySettingsValidator enemyValidator,
+            SpawnSettingsValidator spawnValidator,
             WorldSettingsValidator worldValidator)
         {
             _config = config;
             _playerValidator = playerValidator;
             _weaponValidator = weaponValidator;
             _enemyValidator = enemyValidator;
+            _spawnValidator = spawnValidator;
             _worldValidator = worldValidator;
         }
 
@@ -32,6 +35,7 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs.Validation
             _playerValidator.Validate(_config.Player, _config.Player, _config.Player, _config.Player);
             _weaponValidator.Validate(_config.Weapons, _config.Weapons);
             _enemyValidator.Validate(_config.Enemies, _config.Enemies, _config.Enemies);
+            _spawnValidator.Validate(_config.Spawning);
             _worldValidator.Validate(_config.World);
         }
     }

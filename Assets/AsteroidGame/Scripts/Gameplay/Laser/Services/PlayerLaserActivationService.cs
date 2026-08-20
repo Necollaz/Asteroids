@@ -3,7 +3,6 @@ using Zenject;
 using AsteroidGame.Scripts.Gameplay.Game;
 using AsteroidGame.Scripts.Gameplay.Laser.Calculations;
 using AsteroidGame.Scripts.Gameplay.Laser.States;
-using AsteroidGame.Scripts.Gameplay.Time;
 using AsteroidGame.Scripts.Signals.Player;
 
 namespace AsteroidGame.Scripts.Gameplay.Laser.Services
@@ -13,20 +12,17 @@ namespace AsteroidGame.Scripts.Gameplay.Laser.Services
         private readonly PlayerLaserState _laserState;
         private readonly PlayerLaserBeamGeometry _beamGeometry;
         private readonly IGameplayPauseState _gameplayPauseState;
-        private readonly ITimeProvider _timeProvider;
         private readonly SignalBus _signalBus;
 
         public PlayerLaserActivationService(
             PlayerLaserState laserState,
             PlayerLaserBeamGeometry beamGeometry,
             IGameplayPauseState gameplayPauseState,
-            ITimeProvider timeProvider,
             SignalBus signalBus)
         {
             _laserState = laserState;
             _beamGeometry = beamGeometry;
             _gameplayPauseState = gameplayPauseState;
-            _timeProvider = timeProvider;
             _signalBus = signalBus;
         }
 

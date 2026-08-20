@@ -3,17 +3,13 @@ using Zenject;
 using AsteroidGame.Scripts.Domain.Asteroids.Models;
 using AsteroidGame.Scripts.Domain.Asteroids.Settings;
 using AsteroidGame.Scripts.Domain.Collision.Bodies;
-using AsteroidGame.Scripts.Domain.Enemies.Mapping;
 using AsteroidGame.Scripts.Domain.Enemies.Models;
-using AsteroidGame.Scripts.Domain.Enemies.Types;
-using AsteroidGame.Scripts.Domain.Physics.Models;
 using AsteroidGame.Scripts.Gameplay.Asteroids.Calculations;
 using AsteroidGame.Scripts.Gameplay.Asteroids.Contracts;
 using AsteroidGame.Scripts.Gameplay.Asteroids.Factories;
 using AsteroidGame.Scripts.Gameplay.Asteroids.Models;
 using AsteroidGame.Scripts.Gameplay.Asteroids.Pooling;
 using AsteroidGame.Scripts.Gameplay.Asteroids.Services;
-using AsteroidGame.Scripts.Gameplay.Enemies.Factories;
 using AsteroidGame.Scripts.Gameplay.Enemies.Spawning;
 using AsteroidGame.Scripts.Installers.SceneReferences;
 using AsteroidGame.Scripts.Presentation.Asteroids;
@@ -42,7 +38,6 @@ namespace AsteroidGame.Scripts.Installers.Enemies
                 throw new InvalidOperationException("Gameplay root is not assigned in GameInstaller.");
 
             Container.Bind<AsteroidSettings>().AsSingle();
-            Container.Bind<EnemyCollisionCategoryMapper>().AsSingle();
             Container.Bind<AsteroidSpawnPointSelector>().AsSingle();
             Container.Bind<AsteroidVelocityStabilizer>().AsSingle();
             Container.Bind<AsteroidInstanceFactory>().AsSingle();
@@ -60,7 +55,6 @@ namespace AsteroidGame.Scripts.Installers.Enemies
             Container.BindInterfacesAndSelfTo<AsteroidSimulationService>().AsSingle();
             Container.BindInterfacesAndSelfTo<AsteroidDestructionService>().AsSingle();
 
-            Container.BindFactory<EnemyType, Body2D, EnemyModel, EnemyModelFactory>();
             Container.BindFactory<EnemyModel, AsteroidModel, AsteroidModelFactory>();
             Container.BindFactory<
                 AsteroidModel,

@@ -30,7 +30,5 @@ namespace AsteroidGame.Scripts.Domain.Player.States
 
             return true;
         }
-
-        public void RestoreFull() => CurrentHealth = MaxHealth;
     }
 }

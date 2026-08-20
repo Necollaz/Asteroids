@@ -3,14 +3,18 @@ using UnityEngine.EventSystems;
 
 namespace AsteroidGame.Scripts.Input.Mobile.Views
 {
-    public sealed class MobileInputButtonView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
+    public sealed class MobileInputButtonView : 
+        MonoBehaviour,
+        IPointerDownHandler,
+        IPointerUpHandler,
+        IPointerExitHandler
     {
         private bool _isPressed;
         private bool _wasPressedThisFrame;
         
         public bool IsPressed => _isPressed;
 
-        private void OnDisable() => _isPressed = false;
+        private void OnDisable() => ResetState();
         
         public void OnPointerDown(PointerEventData eventData)
         {

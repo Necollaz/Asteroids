@@ -1,5 +1,7 @@
 using Zenject;
+using UnityEngine;
 using AsteroidGame.Scripts.Domain.Asteroids.Settings;
+using AsteroidGame.Scripts.Domain.Enemies.Settings;
 using AsteroidGame.Scripts.Domain.Enemies.Types;
 using AsteroidGame.Scripts.Domain.Physics.Factories;
 using AsteroidGame.Scripts.Domain.Physics.Models;
@@ -13,8 +15,12 @@ namespace AsteroidGame.Scripts.Gameplay.Asteroids.Services
 {
     public sealed class AsteroidSpawnService : ITickable
     {
+        private const string SpawnFailedMessage =
+            "Large asteroid spawn skipped. Asteroid pool has no available instances.";
+        
         private readonly AsteroidPool _pool;
-        private readonly AsteroidSettings _settings;
+        private readonly AsteroidSettings _asteroidSettings;
+        private readonly EnemySpawnSettings _enemySettings;
         private readonly AsteroidSpawnPointSelector _spawnPointSelector;
         private readonly PhysicsValueFactory _physicsValueFactory;
         private readonly ITimeProvider _timeProvider;
@@ -24,19 +30,21 @@ namespace AsteroidGame.Scripts.Gameplay.Asteroids.Services
 
         public AsteroidSpawnService(
             AsteroidPool pool,
-            AsteroidSettings settings,
+            AsteroidSettings asteroidSettings,
+            EnemySpawnSettings enemySettings,
             AsteroidSpawnPointSelector spawnPointSelector,
             PhysicsValueFactory physicsValueFactory,
             ITimeProvider timeProvider,
             IGameplayPauseState pauseState)
         {
             _pool = pool;
-            _settings = settings;
+            _asteroidSettings = asteroidSettings;
+            _enemySettings = enemySettings;
             _spawnPointSelector = spawnPointSelector;
             _physicsValueFactory = physicsValueFactory;
             _timeProvider = timeProvider;
             _pauseState = pauseState;
-            _remainingSeconds = settings.SpawnIntervalSeconds;
+            _remainingSeconds = _enemySettings.AsteroidSpawnIntervalSeconds;
         }
 
         void ITickable.Tick()
@@ -44,7 +52,7 @@ namespace AsteroidGame.Scripts.Gameplay.Asteroids.Services
             if (_pauseState.IsPaused)
                 return;
             
-            if (_pool.ActiveAsteroids.Count >= _settings.MaxActiveAsteroids)
+            if (_pool.ActiveAsteroids.Count >= _enemySettings.MaxActiveAsteroids)
                 return;
             
             _remainingSeconds -= _timeProvider.DeltaTime;
@@ -53,15 +61,19 @@ namespace AsteroidGame.Scripts.Gameplay.Asteroids.Services
                 return;
 
             SpawnLargeAsteroid();
-            _remainingSeconds = _settings.SpawnIntervalSeconds;
+            _remainingSeconds = _enemySettings.AsteroidSpawnIntervalSeconds;
         }
 
         private void SpawnLargeAsteroid()
         {
             AsteroidSpawnData spawnData = _spawnPointSelector.Select();
-            float speed = _settings.GetSpeed(EnemyType.LargeAsteroid);
+            float speed = _asteroidSettings.GetSpeed(EnemyType.LargeAsteroid);
             Velocity velocity = _physicsValueFactory.CreateVelocity(spawnData.Direction.Multiply(speed));
-            _pool.TrySpawn(EnemyType.LargeAsteroid, spawnData.Position, velocity, 0f);
+            
+            if (_pool.TrySpawn(EnemyType.LargeAsteroid, spawnData.Position, velocity, 0f))
+                return;
+            
+            Debug.LogWarning(SpawnFailedMessage);
         }
     }
 }

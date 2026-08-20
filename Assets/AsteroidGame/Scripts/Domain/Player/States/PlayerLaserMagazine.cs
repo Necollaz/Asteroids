@@ -38,7 +38,5 @@ namespace AsteroidGame.Scripts.Domain.Player.States
 
             return true;
         }
-
-        public void Refill() => Charges = MaxCharges;
     }
 }

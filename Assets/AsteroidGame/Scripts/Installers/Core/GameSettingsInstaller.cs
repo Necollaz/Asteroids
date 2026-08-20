@@ -50,6 +50,7 @@ namespace AsteroidGame.Scripts.Installers.Core
             Container.Bind<PlayerSettingsValidator>().AsSingle();
             Container.Bind<WeaponSettingsValidator>().AsSingle();
             Container.Bind<EnemySettingsValidator>().AsSingle();
+            Container.Bind<SpawnSettingsValidator>().AsSingle();
             Container.Bind<WorldSettingsValidator>().AsSingle();
         }
 
@@ -74,11 +75,15 @@ namespace AsteroidGame.Scripts.Installers.Core
             Container.Bind<JsonWorldSettingsSection>()
                 .FromResolveGetter<GameplayJsonSettings>(settings => settings.World)
                 .AsSingle();
+            Container.Bind<JsonEnemySpawnSettingsSection>()
+                .FromResolveGetter<GameplayJsonSettings>(settings => settings.Spawn)
+                .AsSingle();
 
             BindPlayerSettings<JsonPlayerSettingsSection>();
             BindWeaponSettings<JsonWeaponSettingsSection>();
             BindEnemySettings<JsonEnemySettingsSection>();
             BindWorldSettings<JsonWorldSettingsSection>();
+            BindSpawnSettings<JsonEnemySpawnSettingsSection>();
         }
 
         private void BindScriptableObjectSettings(GameplaySettingsConfig config)
@@ -87,11 +92,13 @@ namespace AsteroidGame.Scripts.Installers.Core
             Container.Bind<WeaponSettingsConfigSection>().FromInstance(config.Weapons).AsSingle();
             Container.Bind<EnemySettingsConfigSection>().FromInstance(config.Enemies).AsSingle();
             Container.Bind<WorldSettingsConfigSection>().FromInstance(config.World).AsSingle();
+            Container.Bind<SpawnSettingsConfigSection>().FromInstance(config.Spawning).AsSingle();
 
             BindPlayerSettings<PlayerSettingsConfigSection>();
             BindWeaponSettings<WeaponSettingsConfigSection>();
             BindEnemySettings<EnemySettingsConfigSection>();
             BindWorldSettings<WorldSettingsConfigSection>();
+            BindSpawnSettings<SpawnSettingsConfigSection>();
 
             Container.BindInterfacesAndSelfTo<GameplaySettingsConfigValidator>().AsSingle();
         }
@@ -127,5 +134,8 @@ namespace AsteroidGame.Scripts.Installers.Core
 
         private void BindWorldSettings<TSettings>() where TSettings : IWorldSettingsData => 
             Container.Bind<IWorldSettingsData>().To<TSettings>().FromResolve();
+        
+        private void BindSpawnSettings<TSettings>() where TSettings : IEnemySpawnSettingsData => 
+            Container.Bind<IEnemySpawnSettingsData>().To<TSettings>().FromResolve();
     }
 }

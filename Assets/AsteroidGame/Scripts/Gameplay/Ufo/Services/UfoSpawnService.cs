@@ -1,3 +1,4 @@
+using AsteroidGame.Scripts.Domain.Enemies.Settings;
 using Zenject;
 using AsteroidGame.Scripts.Domain.Physics.Factories;
 using AsteroidGame.Scripts.Domain.Physics.Models;
@@ -13,7 +14,8 @@ namespace AsteroidGame.Scripts.Gameplay.Ufo.Services
     public sealed class UfoSpawnService : ITickable
     {
         private readonly UfoPool _pool;
-        private readonly UfoSettings _settings;
+        private readonly UfoSettings _ufoSettings;
+        private readonly EnemySpawnSettings _enemySettings;
         private readonly OutsideWorldSpawnPointSelector _spawnPointSelector;
         private readonly IPlayerBodyProvider _playerBodyProvider;
         private readonly PhysicsValueFactory _physicsValueFactory;
@@ -24,7 +26,8 @@ namespace AsteroidGame.Scripts.Gameplay.Ufo.Services
 
         public UfoSpawnService(
             UfoPool pool,
-            UfoSettings settings,
+            UfoSettings ufoSettings,
+            EnemySpawnSettings enemySettings,
             OutsideWorldSpawnPointSelector spawnPointSelector,
             IPlayerBodyProvider playerBodyProvider,
             PhysicsValueFactory physicsValueFactory,
@@ -32,13 +35,14 @@ namespace AsteroidGame.Scripts.Gameplay.Ufo.Services
             IGameplayPauseState pauseState)
         {
             _pool = pool;
-            _settings = settings;
+            _ufoSettings = ufoSettings;
+            _enemySettings = enemySettings;
             _spawnPointSelector = spawnPointSelector;
             _playerBodyProvider = playerBodyProvider;
             _physicsValueFactory = physicsValueFactory;
             _timeProvider = timeProvider;
             _pauseState = pauseState;
-            _remainingSeconds = settings.SpawnIntervalSeconds;
+            _remainingSeconds = enemySettings.UfoSpawnIntervalSeconds;
         }
 
         void ITickable.Tick()
@@ -46,7 +50,7 @@ namespace AsteroidGame.Scripts.Gameplay.Ufo.Services
             if (_pauseState.IsPaused)
                 return;
             
-            if (_pool.ActiveUfo.Count >= _settings.MaxActiveUfo)
+            if (_pool.ActiveUfos.Count >= _enemySettings.MaxActiveUfo)
                 return;
 
             _remainingSeconds -= _timeProvider.DeltaTime;
@@ -55,14 +59,14 @@ namespace AsteroidGame.Scripts.Gameplay.Ufo.Services
                 return;
 
             SpawnUfo();
-            _remainingSeconds = _settings.SpawnIntervalSeconds;
+            _remainingSeconds = _enemySettings.UfoSpawnIntervalSeconds;
         }
 
         private void SpawnUfo()
         {
-            Vector2D position = _spawnPointSelector.Select(_settings.SpawnMargin);
+            Vector2D position = _spawnPointSelector.Select(_enemySettings.UfoSpawnMargin);
             Vector2D direction = _playerBodyProvider.Body.Position.Subtract(position).Normalized;
-            Velocity velocity = _physicsValueFactory.CreateVelocity(direction.Multiply(_settings.Speed));
+            Velocity velocity = _physicsValueFactory.CreateVelocity(direction.Multiply(_ufoSettings.Speed));
 
             _pool.TrySpawn(position, velocity, 0f);
         }

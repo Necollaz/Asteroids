@@ -19,7 +19,7 @@ namespace AsteroidGame.Scripts.Presentation.Laser
         {
             get
             {
-                ValidateRequiredReferences();
+                ValidateRuntimeReferences();
 
                 Vector3 position = _spawnPoint.position;
 
@@ -30,7 +30,7 @@ namespace AsteroidGame.Scripts.Presentation.Laser
         {
             get
             {
-                ValidateRequiredReferences();
+                ValidateRuntimeReferences();
 
                 Vector3 direction = _directionRoot.up;
 
@@ -41,7 +41,7 @@ namespace AsteroidGame.Scripts.Presentation.Laser
         [Inject] private void Construct(PhysicsValueFactory physicsValueFactory) =>
             _physicsValueFactory = physicsValueFactory ?? throw new ArgumentNullException(nameof(physicsValueFactory));
 
-        private void Awake() => ValidateRequiredReferences();
+        private void Awake() => ValidateSceneReferences();
 
         private void OnValidate()
         {
@@ -52,19 +52,24 @@ namespace AsteroidGame.Scripts.Presentation.Laser
                 _directionRoot = _spawnPoint;
         }
 
-        private void ValidateRequiredReferences()
+        private void ValidateRuntimeReferences()
+        {
+            ValidateSceneReferences();
+
+            if (_physicsValueFactory == null)
+            {
+                throw new InvalidOperationException(
+                    $"{nameof(PlayerLaserSpawnPointView)} requires PhysicsValueFactory.");
+            }
+        }
+
+        private void ValidateSceneReferences()
         {
             if (_spawnPoint == null)
                 throw new InvalidOperationException($"{nameof(PlayerLaserSpawnPointView)} requires spawn point.");
 
             if (_directionRoot == null)
                 throw new InvalidOperationException($"{nameof(PlayerLaserSpawnPointView)} requires direction root.");
-
-            if (_physicsValueFactory == null && Application.isPlaying)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(PlayerLaserSpawnPointView)} requires PhysicsValueFactory.");
-            }
         }
     }
 }

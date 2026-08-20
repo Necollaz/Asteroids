@@ -59,9 +59,9 @@ namespace AsteroidGame.Scripts.Installers
             CollisionBindingsInstaller.Install(Container);
             PlayerBindingsInstaller.Install(Container);
             BulletBindingsInstaller.Install(Container, this);
+            EnemyRegistryBindingsInstaller.Install(Container);
             AsteroidBindingsInstaller.Install(Container, this);
             UfoBindingsInstaller.Install(Container, this);
-            EnemyRegistryBindingsInstaller.Install(Container);
             EffectsBindingsInstaller.Install(Container, this);
             LaserBindingsInstaller.Install(Container);
             ScoreBindingsInstaller.Install(Container);

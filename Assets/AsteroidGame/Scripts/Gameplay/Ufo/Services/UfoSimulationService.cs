@@ -49,7 +49,7 @@ namespace AsteroidGame.Scripts.Gameplay.Ufo.Services
                 return;
             
             float deltaTime = _timeProvider.FixedDeltaTime;
-            IReadOnlyList<UfoInstance> activeUfo = _pool.ActiveUfo;
+            IReadOnlyList<UfoInstance> activeUfo = _pool.ActiveUfos;
 
             for (int i = 0; i < activeUfo.Count; i++)
                 TickUfo(activeUfo[i], deltaTime);

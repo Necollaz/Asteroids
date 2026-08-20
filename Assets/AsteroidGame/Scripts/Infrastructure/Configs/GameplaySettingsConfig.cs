@@ -23,6 +23,7 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         [SerializeField] private WeaponSettingsConfigSection _weapons = new WeaponSettingsConfigSection();
         [SerializeField] private EnemySettingsConfigSection _enemies = new EnemySettingsConfigSection();
         [SerializeField] private WorldSettingsConfigSection _world = new WorldSettingsConfigSection();
+        [SerializeField] private SpawnSettingsConfigSection _spawning = new SpawnSettingsConfigSection();
 
         public GameplaySettingsSource SettingsSource => _settingsSource;
 
@@ -34,6 +35,7 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
         public WeaponSettingsConfigSection Weapons => RequireSection(_weapons, nameof(_weapons));
         public EnemySettingsConfigSection Enemies => RequireSection(_enemies, nameof(_enemies));
         public WorldSettingsConfigSection World => RequireSection(_world, nameof(_world));
+        public SpawnSettingsConfigSection Spawning => RequireSection(_spawning, nameof(_spawning));
 
         private void OnValidate()
         {
@@ -55,6 +57,7 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
             _weapons ??= new WeaponSettingsConfigSection();
             _enemies ??= new EnemySettingsConfigSection();
             _world ??= new WorldSettingsConfigSection();
+            _spawning ??= new SpawnSettingsConfigSection();
         }
 
         private void ValidateSections()
@@ -70,6 +73,9 @@ namespace AsteroidGame.Scripts.Infrastructure.Configs
 
             if (_world == null)
                 Debug.LogError($"{nameof(GameplaySettingsConfig)} requires world settings section.", this);
+            
+            if (_spawning == null)
+                Debug.LogError($"{nameof(GameplaySettingsConfig)} requires spawning settings section.", this);
         }
 
         private void ValidateJsonReferences()

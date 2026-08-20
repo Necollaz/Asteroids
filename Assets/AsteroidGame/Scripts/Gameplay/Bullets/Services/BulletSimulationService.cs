@@ -37,7 +37,7 @@ namespace AsteroidGame.Scripts.Gameplay.Bullets.Services
             if (_pauseState.IsPaused)
                 return;
 
-            float deltaTime = _timeProvider.DeltaTime;
+            float deltaTime = _timeProvider.FixedDeltaTime;
             IReadOnlyList<BulletInstance> bullets = _bulletPool.ActiveBullets;
 
             for (int i = bullets.Count - 1; i >= 0; i--)
